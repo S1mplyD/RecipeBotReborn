@@ -4,6 +4,7 @@ require("dotenv").config();
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
+// connetti al db
 mongoose.connect(
   process.env.MONGO_URL || "",
   {
@@ -21,7 +22,3 @@ mongoose.connect(
     await client.login(process.env.BOT_TOKEN);
   }
 );
-
-client.once(Events.ClientReady, (c) => {
-  console.log(`Ready! Logged in as ${c.user.tag}`);
-});
