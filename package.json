@@ -1,17 +1,15 @@
 {
   "name": "recipebot2.0",
-  "description": "Version 2.0 of RecipeBot",
   "version": "1.0.0",
-  "main": "src/index.js",
+  "description": "recipe bot ",
+  "main": "index.ts",
   "scripts": {
-    "dev": "nodemon ./src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "test"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/S1mplyD/RecipeBot2.0.git"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
@@ -21,7 +19,7 @@
   "dependencies": {
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
-    "mongoose": "^6.8.0",
-    "nodemon": "^2.0.20"
+    "mongoose": "^6.8.4",
+    "typescript": "^4.9.4"
   }
 }
