@@ -33,7 +33,7 @@ for (const folder of commandFolders) {
 }
 
 // Construct and prepare an instance of the REST module
-const rest = new REST({ version: "9" }).setToken(process.env.CLIENT_TOKEN!);
+const rest = new REST({ version: "10" }).setToken(process.env.CLIENT_TOKEN!);
 
 // and deploy your commands!
 (async () => {
