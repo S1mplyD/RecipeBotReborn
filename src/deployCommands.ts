@@ -5,7 +5,7 @@ import path, { resolve } from "path";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
-const commands = [];
+const commands: any[] = [];
 // Grab all the command files from the commands directory you created earlier
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
