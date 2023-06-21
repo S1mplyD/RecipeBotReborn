@@ -6,6 +6,8 @@ import {
   Interaction,
 } from "discord.js";
 
+import { guildDoc } from "../database/schema/guild";
+
 export class CustomClient extends Client {
   public commands: Collection<string, any>;
 
