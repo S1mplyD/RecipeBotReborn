@@ -3,10 +3,10 @@ import { CustomClient } from "./client/client";
 import { config } from "dotenv";
 import path, { resolve } from "path";
 import fs from "fs";
+import mongoose from "mongoose";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
-// Create a new client instance
 const client = new CustomClient();
 client.setupInteractionHandler();
 
@@ -31,11 +31,21 @@ for (const folder of commandFolders) {
   }
 }
 
-// When the client is ready, run this code (only once)
-// We use 'c' for the event parameter to keep it separate from the already defined 'client'
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
-// Log in to Discord with your client's token
-client.login(process.env.TOKEN);
+mongoose.set("strictQuery", false);
+mongoose
+  .connect(process.env.MONGO_URL || "", {
+    user: process.env.USER_DB,
+    pass: process.env.PASSWORD_DB,
+  })
+
+  .then(() => {
+    console.log("connected to mongoose");
+    client.login(process.env.TOKEN);
+  })
+  .catch((error) => {
+    throw error;
+  });

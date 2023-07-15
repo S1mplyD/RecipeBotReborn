@@ -45,10 +45,6 @@ const GuildSchema = new Schema({
     type: Schema.Types.String,
     default: "en",
   },
-  prefix: {
-    type: Schema.Types.String,
-    default: "!",
-  },
   premium: {
     type: Schema.Types.Boolean,
     default: false,

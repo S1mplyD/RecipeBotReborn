@@ -9,10 +9,12 @@ module.exports = {
     .setName("help")
     .setDescription("Show RecipeBot commands"),
   async execute(interaction: CommandInteraction, guild: guildDoc) {
-    console.log(interaction.guildLocale);
-    const lang = interaction.guildLocale;
+    let lang = interaction.guildLocale as string;
+    if (lang === "en-US") lang = "en";
 
     const languagePack = loadLanguage(lang!);
+    // console.log(interaction.user.id); id dell'utente che ha eseguito il comando
+
     const helpEmbed = new EmbedBuilder()
       .setAuthor({ name: "RecipeBot", iconURL: constants.botImage })
       .setTitle("RecipeBot commands")
@@ -20,10 +22,7 @@ module.exports = {
       .addFields(
         {
           name: languagePack.help.help.Name,
-          value: languagePack.help.help.Value.replace(
-            "%s",
-            guild?.prefix || ""
-          ),
+          value: languagePack.help.help.Value,
         },
         {
           name: languagePack.help.randomRecipe.Name,
