@@ -1,66 +1,27 @@
-import { Schema, model, Model, Document } from "mongoose";
+import { Schema, model, Document } from "mongoose";
 
-export interface IGuildSchema {
+interface Guild {
   guildId: string;
   name: string;
   region: string;
   memberCount: number;
-  lang?: string;
-  recipe_lang?: string;
-  prefix?: string;
-  premium?: boolean;
+  lang: string;
+  recipe_lang: string;
+  premium: boolean;
 }
 
-export interface guildDoc extends Document {
-  guildId: string;
-  name: string;
-  region: string;
-  memberCount: number;
-  lang?: string;
-  recipe_lang?: string;
-  prefix?: string;
-  premium?: boolean;
-}
+interface GuildDocument extends Guild, Document {}
 
-const GuildSchema = new Schema({
-  guildId: {
-    type: Schema.Types.String,
-    require: true,
-    unique: true,
-  },
-  name: {
-    type: Schema.Types.String,
-  },
-  region: {
-    type: Schema.Types.String,
-  },
-  memberCount: {
-    type: Schema.Types.Number,
-  },
-  lang: {
-    type: Schema.Types.String,
-    default: "en",
-  },
-  recipe_lang: {
-    type: Schema.Types.String,
-    default: "en",
-  },
-  premium: {
-    type: Schema.Types.Boolean,
-    default: false,
-  },
+const guildSchema = new Schema<GuildDocument>({
+  guildId: { type: String, required: true, unique: true },
+  name: { type: String, required: true },
+  region: { type: String, required: true },
+  memberCount: { type: Number },
+  lang: { type: String },
+  recipe_lang: { type: String },
+  premium: { type: Boolean, required: true, default: false },
 });
 
-// Added interface for building model
-interface guildInterface extends Model<guildDoc> {
-  build(attr: IGuildSchema): guildDoc;
-}
+const guildModel = model<GuildDocument>("guildData", guildSchema);
 
-GuildSchema.statics.build = (attr: IGuildSchema) => {
-  return new Guild(attr);
-};
-
-const Guild = model<guildDoc, guildInterface>("Guild", GuildSchema);
-
-export { Guild };
-export default Guild;
+export default guildModel;
