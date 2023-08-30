@@ -1,4 +1,4 @@
-import { Events, CommandInteraction } from "discord.js";
+import { Events } from "discord.js";
 import { CustomClient } from "./client/client";
 import { config } from "dotenv";
 import path, { resolve } from "path";
@@ -17,7 +17,7 @@ for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts"));
+    .filter((file) => file.endsWith(".ts" || ".js"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
