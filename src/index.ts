@@ -4,6 +4,8 @@ import { config } from "dotenv";
 import path, { resolve } from "path";
 import fs from "fs";
 import mongoose from "mongoose";
+import { createGuild, getAllGuilds } from "./database/querys/guild";
+import { GuildType } from "./utils/types";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
@@ -35,6 +37,20 @@ client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
 });
 
+client.on("guildCreate", async (guild) => {
+  try {
+    const newGuild: Error | GuildType = await createGuild(
+      guild.id,
+      guild.name,
+      guild.memberCount
+    );
+
+    console.log(newGuild);
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 mongoose.set("strictQuery", false);
 mongoose
   .connect(process.env.MONGO_URL || "", {
@@ -42,7 +58,7 @@ mongoose
     pass: process.env.PASSWORD_DB,
   })
 
-  .then(() => {
+  .then(async () => {
     console.log("connected to mongoose");
     client.login(process.env.TOKEN);
   })
