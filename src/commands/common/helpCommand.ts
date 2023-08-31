@@ -1,4 +1,4 @@
-import { Message, EmbedBuilder, CommandInteraction } from "discord.js";
+import { EmbedBuilder, CommandInteraction } from "discord.js";
 import { GuildType } from "../../utils/types";
 import loadLanguage from "../../utils/loadLanguage";
 import constants from "../../utils/constants";

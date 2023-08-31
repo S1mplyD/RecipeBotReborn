@@ -1,4 +1,4 @@
-import { BaseInteraction, Client, SlashCommandBuilder } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import { CommandInteraction } from "discord.js";
 import {
   getAllMembersCount,
