@@ -24,19 +24,68 @@ export async function getAllGuilds() {
 export async function createGuild(
   guildId: string,
   name: string,
-  region: string,
-  memberCount: number,
-  lang: string,
-  recipe_lang: string,
+  memberCount: number
 ) {
   const newGuild: GuildType | null = await guildSchema.create({
     guildId: guildId,
     name: name,
-    region: region,
     memberCount: memberCount,
-    lang: lang,
-    recipe_lang: recipe_lang,
   });
   if (!newGuild) return new Error("Cannot Create");
   else return newGuild;
+}
+
+export async function deleteGuild(guildId: string) {
+  const deleted = await guildSchema.deleteOne({ guildId: guildId });
+  if (deleted.deletedCount < 1) return new Error("Cannot Delete");
+}
+
+export async function getMembersCount(guildId: string) {
+  const guild: GuildType | null = await guildSchema.findOne({
+    guildId: guildId,
+  });
+  if (!guild) return new Error("Not Found");
+  else return guild.memberCount;
+}
+
+export async function getAllMembersCount() {
+  const guilds: GuildType[] | null = await guildSchema.find();
+  if (!guilds) return new Error("Not found");
+  else {
+    let members: number = 0;
+    for (let i of guilds) {
+      members += i.memberCount;
+    }
+    return members;
+  }
+}
+
+export async function getServerNumber() {
+  const guilds: GuildType[] | Error = await getAllGuilds();
+  if (guilds instanceof Error) return guilds;
+  else return guilds.length;
+}
+
+export async function getGuildByGuildId(guildId: string) {
+  const guild: GuildType | null = await guildSchema.findOne({
+    guildId: guildId,
+  });
+  if (!guild) return new Error("Not Found");
+  else return guild;
+}
+
+export async function updateGuildLanguage(guildId: string, lang: string) {
+  const update = await guildSchema.updateOne(
+    { guildId: guildId },
+    { lang: lang }
+  );
+  if (update.modifiedCount < 1) return new Error("Cannot Update");
+}
+
+export async function getGuildLang(guildId: string) {
+  const guild: GuildType | null = await guildSchema.findOne({
+    guildId: guildId,
+  });
+  if (!guild) return new Error("Not found");
+  else return guild.lang;
 }
