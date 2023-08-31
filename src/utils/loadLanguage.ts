@@ -8,7 +8,7 @@ export default function loadLanguage(language = "en"): {
   if (Object.keys(langs).includes(language)) {
     return {
       name: langs[language].name,
-      code: langs[language].translations,
+      code: langs[language].code,
     };
   }
   console.error(`Language ${language} not found!`);
