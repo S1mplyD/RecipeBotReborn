@@ -8,6 +8,7 @@ import constants from "../../utils/constants";
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDefaultMemberPermissions(0) // Hides the command from the list
     .setName("count")
     .setDescription("Get the numbers of people using this bot"),
   async execute(interaction: CommandInteraction) {
@@ -27,5 +28,5 @@ module.exports = {
         ephemeral: true,
       });
     }
-    }, 
+  },
 };
