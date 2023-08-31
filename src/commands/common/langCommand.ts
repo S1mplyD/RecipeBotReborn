@@ -27,8 +27,7 @@ module.exports = {
       Object.entries(langs).forEach(([langCode, langInfo]) => {
         const field = {
           name: langInfo.name,
-          value: `\`/lang ${langCode}\``,
-          inline: true,
+          value: langCode,
         };
         option.addChoices(field);
       });
@@ -36,8 +35,9 @@ module.exports = {
       return option;
     }),
   async execute(interaction: CommandInteraction, guild: GuildType) {
+    console.log("Command executed");
     const args = interaction.options.get("lang");
-    console.log(args);
+    console.log("Args:", args);
 
     if (!args) {
       let language = interaction.guildLocale as string;
