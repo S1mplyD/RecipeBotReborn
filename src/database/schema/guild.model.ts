@@ -15,10 +15,10 @@ interface GuildDocument extends Guild, Document {}
 const guildSchema = new Schema<GuildDocument>({
   guildId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
-  region: { type: String, required: true },
+  region: { type: String },
   memberCount: { type: Number },
-  lang: { type: String },
-  recipe_lang: { type: String },
+  lang: { type: String, default: "en" },
+  recipe_lang: { type: String, default: "en" },
   premium: { type: Boolean, required: true, default: false },
 });
 
