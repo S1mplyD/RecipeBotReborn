@@ -14,7 +14,7 @@ module.exports = {
     if (lang instanceof Error) return lang;
     // if (lang === "en-US") lang = "en";
 
-    const languagePack = loadLanguage(lang!);
+    const languagePack = loadLanguage(lang);
     // console.log(interaction.user.id); id dell'utente che ha eseguito il comando
 
     const helpEmbed = new EmbedBuilder()
@@ -23,63 +23,63 @@ module.exports = {
       .setColor(constants.message.color)
       .addFields(
         {
-          name: languagePack.help.help.Name,
-          value: languagePack.help.help.Value,
+          name: languagePack.code.help.help.Name,
+          value: languagePack.code.help.help.Value,
         },
         {
-          name: languagePack.help.randomRecipe.Name,
-          value: languagePack.help.randomRecipe.Value,
+          name: languagePack.code.help.randomRecipe.Name,
+          value: languagePack.code.help.randomRecipe.Value,
         },
         {
-          name: languagePack.help.specificRecipe.Name,
-          value: languagePack.help.specificRecipe.Value,
+          name: languagePack.code.help.specificRecipe.Name,
+          value: languagePack.code.help.specificRecipe.Value,
         },
         {
-          name: languagePack.help.listAvaiableLanguages.Name,
-          value: languagePack.help.listAvaiableLanguages.Value,
+          name: languagePack.code.help.listAvaiableLanguages.Name,
+          value: languagePack.code.help.listAvaiableLanguages.Value,
         },
         {
-          name: languagePack.help.changeBotLanguage.Name,
-          value: languagePack.help.changeBotLanguage.Value,
+          name: languagePack.code.help.changeBotLanguage.Name,
+          value: languagePack.code.help.changeBotLanguage.Value,
         },
         {
-          name: languagePack.help.changeRecipeLanguage.Name,
-          value: languagePack.help.changeRecipeLanguage.Value,
+          name: languagePack.code.help.changeRecipeLanguage.Name,
+          value: languagePack.code.help.changeRecipeLanguage.Value,
         },
         {
-          name: languagePack.help.changePrefix.Name,
-          value: languagePack.help.changePrefix.Value,
+          name: languagePack.code.help.changePrefix.Name,
+          value: languagePack.code.help.changePrefix.Value,
         },
         {
-          name: languagePack.help.timerAdd.Name,
-          value: languagePack.help.timerAdd.Value,
+          name: languagePack.code.help.timerAdd.Name,
+          value: languagePack.code.help.timerAdd.Value,
         },
         {
-          name: languagePack.help.timerOff.Name,
-          value: languagePack.help.timerOff.Value,
+          name: languagePack.code.help.timerOff.Name,
+          value: languagePack.code.help.timerOff.Value,
         },
         {
-          name: languagePack.help.categoryList.Name,
-          value: languagePack.help.categoryList.Value,
+          name: languagePack.code.help.categoryList.Name,
+          value: languagePack.code.help.categoryList.Value,
         },
         {
-          name: languagePack.help.showFavoriteList.Name,
-          value: languagePack.help.showFavoriteList.Value,
+          name: languagePack.code.help.showFavoriteList.Name,
+          value: languagePack.code.help.showFavoriteList.Value,
         },
         {
-          name: languagePack.help.support.Name,
-          value: languagePack.help.support.Value,
+          name: languagePack.code.help.support.Name,
+          value: languagePack.code.help.support.Value,
         },
         {
-          name: languagePack.help.donate.Name,
-          value: languagePack.help.donate.Value,
+          name: languagePack.code.help.donate.Name,
+          value: languagePack.code.help.donate.Value,
         },
         {
-          name: languagePack.help.telegram.Name,
-          value: languagePack.help.telegram.Value,
+          name: languagePack.code.help.telegram.Name,
+          value: languagePack.code.help.telegram.Value,
         }
       )
-      .setFooter({ text: languagePack.help.footer });
+      .setFooter({ text: languagePack.code.help.footer });
 
     await interaction.reply({ embeds: [helpEmbed] });
   },
