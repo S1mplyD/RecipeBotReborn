@@ -3,12 +3,13 @@ import {
   EmbedBuilder,
   CommandInteraction,
 } from "discord.js";
-import { Guild, guildDoc } from "../../database/schema/guild";
+import { GuildType } from "../../utils/types";
 import constants, {
   AviableLanguages,
   LanguageToEmote,
 } from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
+import { updateGuildLanguage } from "../../database/querys/guild";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -26,7 +27,7 @@ module.exports = {
           )
       // Aggiungi altre opzioni di lingua qui
     ),
-  async execute(interaction: CommandInteraction, guild) {
+  async execute(interaction: CommandInteraction, guild: GuildType) {
     const args = interaction.options.get("lang");
     console.log(args);
 
@@ -41,12 +42,12 @@ module.exports = {
         .setDescription(languagePack.languages.title)
         .addFields({
           name: "**ITALIAN**",
-          value: `\`${guild.prefix}lang it\``,
+          value: `\`lang it\``,
           inline: true,
         })
         .addFields({
           name: "**ENGLISH**",
-          value: `\`${guild.prefix}lang en\``,
+          value: `\`lang en\``,
           inline: true,
         });
       // Aggiungi altre opzioni di lingua qui
@@ -54,12 +55,11 @@ module.exports = {
       await interaction.reply({ embeds: [langSetEmbed] });
     } else {
       const newLang = args.value as string;
+      console.log(newLang);
+
       if (AviableLanguages.includes(newLang)) {
         // Aggiorna il linguaggio nella base di dati del server
-        await Guild.findOneAndUpdate(
-          { guildId: interaction.guildId },
-          { lang: newLang }
-        );
+        await updateGuildLanguage(interaction.guildId!, newLang);
         await interaction.reply({
           content: LanguageToEmote[newLang] || "✅",
           ephemeral: true,

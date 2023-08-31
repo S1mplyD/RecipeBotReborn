@@ -6,63 +6,63 @@ export default <LanguageTranscription>{
 
     help: {
       Name: "Mostra la lista dei comandi",
-      Value: "`%shelp`",
+      Value: "`help`",
     },
     randomRecipe: {
       Name: "Fornisce una ricetta casuale",
-      Value: "`%srecipe`",
+      Value: "`recipe`",
     },
     specificRecipe: {
       Name: "Fornisce una ricetta specifica",
-      Value: '`%srecipe "nome ricetta" / "nome categoria"`',
+      Value: '`recipe "nome ricetta" / "nome categoria"`',
     },
     listAvaiableLanguages: {
       Name: "Lista delle lingue disponibili",
-      Value: "`%slang`",
+      Value: "`lang`",
     },
     changeBotLanguage: {
       Name: "Cambia la lingua del bot",
-      Value: '`%slang "lingua"`',
+      Value: '`lang "lingua"`',
     },
     changeRecipeLanguage: {
       Name: "Cambia la lingua delle ricette",
-      Value: '`%srlang "lingua"`',
+      Value: '`rlang "lingua"`',
     },
     changePrefix: {
       Name: "Cambia il prefisso",
-      Value: '`%sprefix "simbolo"`',
+      Value: '`prefix "simbolo"`',
     },
     timerAdd: {
       Name: "Aggiunge un timer per le ricette automatiche",
-      Value: '`%stime "ore"`',
+      Value: '`time "ore"`',
     },
     timerOff: {
       Name: "Disattiva il timer per le ricette automatiche",
-      Value: "`%stime off`",
+      Value: "`time off`",
     },
     categoryList: {
       Name: "Mostra le categorie di ricette disponibili",
-      Value: "`%slist`",
+      Value: "`list`",
     },
     showFavoriteList: {
       Name: "Mostra la tua lista dei preferiti",
-      Value: "`%sfavourite`",
+      Value: "`favourite`",
     },
     support: {
       Name: "Richiedi supporto",
-      Value: "`%ssupport`",
+      Value: "`support`",
     },
     donate: {
       Name: "Fai una donazione agli sviluppatori",
-      Value: "`%sdonate`",
+      Value: "`donate`",
     },
     telegram: {
       Name: "Provami anche su Telegram",
-      Value: "`%stelegram`",
+      Value: "`telegram`",
     },
     vote: {
       Name: "Vota il bot",
-      Value: "`%svote`",
+      Value: "`vote`",
     },
 
     footer: "Ricorda che le ricette sono diverse in base alla lingua",
