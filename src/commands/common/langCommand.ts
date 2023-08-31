@@ -2,6 +2,7 @@ import {
   SlashCommandBuilder,
   EmbedBuilder,
   CommandInteraction,
+  PermissionFlagsBits,
 } from "discord.js";
 import { GuildType } from "../../utils/types";
 import constants, {
@@ -12,9 +13,9 @@ import loadLanguage from "../../utils/loadLanguage";
 import { updateGuildLanguage } from "../../database/querys/guild";
 import langs from "../../languages/index";
 
-
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
     .setName("lang")
     .setDescription("Set the bot language")
     .addStringOption((option) => {
