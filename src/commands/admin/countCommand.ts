@@ -4,14 +4,14 @@ import {
   getAllMembersCount,
   getServerNumber,
 } from "../../database/querys/guild";
-import adminIds from "constants"
+import constants from "../../utils/constants";
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("count")
     .setDescription("Get the numbers of people using this bot"),
   async execute(interaction: CommandInteraction) {
-    if (!adminIds[interaction.user.id]) {
+    if (constants.adminIds.includes(interaction.user.id)) {
       const members: number | Error = await getAllMembersCount();
       const server: number | Error = await getServerNumber();
       if (members instanceof Error)
@@ -22,7 +22,10 @@ module.exports = {
           ephemeral: true,
         });
     } else {
-      await interaction.reply({content: "You cannot use this command", ephemeral: true});
+      await interaction.reply({
+        content: "You cannot use this command",
+        ephemeral: true,
+      });
     }
     }, 
 };
