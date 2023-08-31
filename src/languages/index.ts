@@ -3,11 +3,11 @@ import it from "./it";
 
 export default {
   en: {
+    name: "english",
     code: en,
-    name: "ENGLISH",
   },
   it: {
+    name: "italian",
     code: it,
-    name: "ITALIAN",
   },
 };
