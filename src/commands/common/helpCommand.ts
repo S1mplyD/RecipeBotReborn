@@ -81,6 +81,7 @@ module.exports = {
       )
       .setFooter({ text: languagePack.code.help.footer });
 
-    await interaction.reply({ embeds: [helpEmbed] });
+    await interaction.reply({ embeds: [helpEmbed],
+        ephemeral: true,});
   },
 };
