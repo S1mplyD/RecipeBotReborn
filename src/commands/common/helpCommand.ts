@@ -12,10 +12,8 @@ module.exports = {
   async execute(interaction: CommandInteraction, guild: GuildType) {
     let lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
-    // if (lang === "en-US") lang = "en";
 
     const languagePack = loadLanguage(lang);
-    // console.log(interaction.user.id); id dell'utente che ha eseguito il comando
 
     const helpEmbed = new EmbedBuilder()
       .setAuthor({ name: "RecipeBot", iconURL: constants.botImage })
