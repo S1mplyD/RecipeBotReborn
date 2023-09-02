@@ -6,63 +6,63 @@ export default <LanguageTranscription>{
 
     help: {
       Name: "Shows the Commands list",
-      Value: "`%shelp`",
+      Value: "`help`",
     },
     randomRecipe: {
       Name: "Get a random recipe",
-      Value: "`%srecipe`",
+      Value: "`recipe`",
     },
     specificRecipe: {
       Name: "Get a specific recipe",
-      Value: '`%srecipe "recipe name" / "category name"`',
+      Value: '`recipe "recipe name" / "category name"`',
     },
     listAvaiableLanguages: {
       Name: "Get the list of avaiable languages",
-      Value: "`%slang`",
+      Value: "`lang`",
     },
     changeBotLanguage: {
       Name: "Change bot language",
-      Value: '`%slang "language"`',
+      Value: '`lang "language"`',
     },
     changeRecipeLanguage: {
       Name: "Change recipe language",
-      Value: '`%srlang "language"`',
+      Value: '`rlang "language"`',
     },
     changePrefix: {
       Name: "Change prefix",
-      Value: '`%sprefix "symbol"`',
+      Value: '`prefix "symbol"`',
     },
     timerAdd: {
       Name: "Set an auto-recipe timer",
-      Value: '`%stime "hours"`',
+      Value: '`time "hours"`',
     },
     timerOff: {
       Name: "Turn OFF auto-recipe timer",
-      Value: "`%stime off`",
+      Value: "`time off`",
     },
     categoryList: {
       Name: "Shows the recipe categories list",
-      Value: "`%slist`",
+      Value: "`list`",
     },
     showFavoriteList: {
       Name: "Shows your favorites list",
-      Value: "`%sfavorite`",
+      Value: "`favorite`",
     },
     support: {
       Name: "Request support",
-      Value: "`%ssupport`",
+      Value: "`support`",
     },
     donate: {
       Name: "Donate to developers",
-      Value: "`%sdonate`",
+      Value: "`donate`",
     },
     telegram: {
       Name: "Try me on Telegram",
-      Value: "`%stelegram`",
+      Value: "`telegram`",
     },
     vote: {
       Name: "Vote the bot",
-      Value: "`%svote`",
+      Value: "`vote`",
     },
 
     footer: "Remember that recipes differ by language",

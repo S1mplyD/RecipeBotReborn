@@ -6,7 +6,8 @@ import {
   Interaction,
 } from "discord.js";
 
-import { Guild, guildDoc } from "../database/schema/guild";
+import { GuildType } from "../utils/types";
+import { getGuildByGuildId } from "../database/querys/guild";
 
 export class CustomClient extends Client {
   public commands: Collection<string, any>;
@@ -29,13 +30,13 @@ export class CustomClient extends Client {
         return;
       }
 
-      const guild = await Guild.findOne({ guildId: interaction.guildId });
+      const guild = await getGuildByGuildId(interaction.guildId!);
 
       try {
         //TODO check server permission
         await command.execute(
           interaction as CommandInteraction,
-          guild as guildDoc
+          guild as GuildType
         );
       } catch (error) {
         console.error(error);
