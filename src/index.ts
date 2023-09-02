@@ -4,7 +4,7 @@ import { config } from "dotenv";
 import path, { resolve } from "path";
 import fs from "fs";
 import mongoose from "mongoose";
-import { createGuild, getAllGuilds } from "./database/querys/guild";
+import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
 
 config({ path: resolve(__dirname, "..", ".env") });
@@ -35,6 +35,15 @@ for (const folder of commandFolders) {
 
 client.once(Events.ClientReady, (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  //Controllo i server che usano il bot
+
+  const gilde = client.guilds.cache;
+  gilde.forEach(async (guild) => {
+    const guilddb: GuildType | Error = await getGuildByGuildId(guild.id);
+    if (guilddb instanceof Error) {
+      await createGuild(guild.id, guild.name, guild.memberCount);
+    }
+  });
 });
 
 client.on("guildCreate", async (guild) => {
