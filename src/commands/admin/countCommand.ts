@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { SlashCommandBuilder } from "discord.js";
 import { CommandInteraction } from "discord.js";
 import { getServerNumber } from "../../database/querys/guild";
@@ -24,3 +25,5 @@ module.exports = {
     }
   },
 };
+=======
+>>>>>>> parent of 01e1fd7 (Squashed commit of the following:)

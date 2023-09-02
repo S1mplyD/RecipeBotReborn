@@ -1,13 +1,16 @@
-import { Events } from "discord.js";
+import { Events, CommandInteraction } from "discord.js";
 import { CustomClient } from "./client/client";
 import { config } from "dotenv";
 import path, { resolve } from "path";
 import fs from "fs";
 import mongoose from "mongoose";
+<<<<<<< HEAD
 import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
 import guildModel from "./database/schema/guild.model";
 import { startAllTimer } from "./utils/timers";
+=======
+>>>>>>> parent of 01e1fd7 (Squashed commit of the following:)
 
 config({ path: resolve(__dirname, "..", ".env") });
 
@@ -21,7 +24,7 @@ for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
   const commandFiles = fs
     .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts" || ".js"));
+    .filter((file) => file.endsWith(".ts"));
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
@@ -37,6 +40,7 @@ for (const folder of commandFolders) {
 
 client.once(Events.ClientReady, async (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+<<<<<<< HEAD
   //Controllo i server che usano il bot
 
   const gilde = client.guilds.cache;
@@ -61,6 +65,8 @@ client.on("guildCreate", async (guild) => {
   } catch (error) {
     console.log(error);
   }
+=======
+>>>>>>> parent of 01e1fd7 (Squashed commit of the following:)
 });
 
 client.on("guildDelete", async (guild) => {
@@ -82,7 +88,7 @@ mongoose
     pass: process.env.PASSWORD_DB,
   })
 
-  .then(async () => {
+  .then(() => {
     console.log("connected to mongoose");
     client.login(process.env.TOKEN);
   })
