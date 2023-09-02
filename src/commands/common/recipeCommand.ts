@@ -1,9 +1,9 @@
 import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { GuildType } from "../../utils/types";
+import { GuildType, RecipeType } from "../../utils/types";
 import constants from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
-import { getRecipeName } from "../../database/querys/recipe";
+import { getRandomRecipe, getRecipeName } from "../../database/querys/recipe";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -20,16 +20,20 @@ module.exports = {
     const args = interaction.options.get("name");
 
     if (!args) {
-      const recipeEmbed = new EmbedBuilder()
-        .setTitle("Ricetta casuale")
-        .setColor(constants.message.color)
-        .setDescription("Lorem Ipsum");
+      const recipe: RecipeType | null = await getRandomRecipe(guild.lang);
+      if (!recipe) interaction.reply("not found");
+      else {
+        const recipeEmbed = new EmbedBuilder()
+          .setTitle(recipe.name)
+          .setColor(constants.message.color)
+          .setDescription(recipe.desc);
 
-      await interaction.reply({ embeds: [recipeEmbed] });
+        await interaction.reply({ embeds: [recipeEmbed] });
+      }
     } else {
       let recipeName = args?.value as string;
       console.log("Recipe Name:", recipeName);
-      const recipe = await getRecipeName(recipeName);
+      const recipe = await getRecipeName(recipeName, guild.lang);
       if (recipe) {
         console.log("db name:", recipe.name);
         const recipeEmbed = new EmbedBuilder()
