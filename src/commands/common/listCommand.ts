@@ -21,7 +21,7 @@ module.exports = {
     }
 
     const list = new EmbedBuilder()
-      .setTitle(languagePack.categoryList.title)
+      .setTitle(languagePack.code.categoryList.title)
       .setColor(constants.message.color)
       .setDescription(str);
     await interaction.reply({ embeds: [list] });

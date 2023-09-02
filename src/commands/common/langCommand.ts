@@ -2,6 +2,7 @@ import {
   SlashCommandBuilder,
   EmbedBuilder,
   CommandInteraction,
+  PermissionFlagsBits,
 } from "discord.js";
 import { GuildType } from "../../utils/types";
 import constants, {
@@ -10,26 +11,35 @@ import constants, {
 } from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
 import { updateGuildLanguage } from "../../database/querys/guild";
+import langs from "../../languages/index";
+
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
     .setName("lang")
     .setDescription("Set the bot language")
-    .addStringOption(
-      (option) =>
-        option
-          .setName("lang")
-          .setDescription("The language to set")
-          .setRequired(false)
-          .addChoices(
-            { name: "Italian", value: "it" },
-            { name: "English", value: "en" }
-          )
-      // Aggiungi altre opzioni di lingua qui
-    ),
+    .addStringOption((option) => {
+      option
+        .setName("lang")
+        .setDescription("The language to set")
+        .setRequired(false);
+
+      // Aggiungi le scelte basate sulle lingue disponibili
+      Object.entries(langs).forEach(([langCode, langInfo]) => {
+        const field = {
+          name: langInfo.name,
+          value: langCode,
+        };
+        option.addChoices(field);
+      });
+
+      return option;
+    }),
   async execute(interaction: CommandInteraction, guild: GuildType) {
+    console.log("Command executed");
     const args = interaction.options.get("lang");
-    console.log(args);
+    console.log("Args:", args);
 
     if (!args) {
       let language = interaction.guildLocale as string;
@@ -39,16 +49,14 @@ module.exports = {
 
       const langSetEmbed = new EmbedBuilder()
         .setColor(constants.message.color)
-        .setDescription(languagePack.languages.title)
-        .addFields({
-          name: "**ITALIAN**",
-          value: `\`lang it\``,
-          inline: true,
-        })
-        .addFields({
-          name: "**ENGLISH**",
-          value: `\`lang en\``,
-          inline: true,
+        .setDescription(languagePack.code.languages.title)
+        Object.entries(langs).forEach(([langCode, langInfo]) => {
+          const field = {
+            name: langInfo.name,
+            value: `\`/lang ${langCode}\``,
+            inline: true,
+          };
+          langSetEmbed.addFields(field);
         });
       // Aggiungi altre opzioni di lingua qui
 
