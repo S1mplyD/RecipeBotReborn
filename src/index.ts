@@ -4,11 +4,7 @@ import { config } from "dotenv";
 import path, { resolve } from "path";
 import fs from "fs";
 import mongoose from "mongoose";
-import {
-  createGuild,
-  getAllGuilds,
-  getGuildByGuildId,
-} from "./database/querys/guild";
+import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
 
 config({ path: resolve(__dirname, "..", ".env") });
