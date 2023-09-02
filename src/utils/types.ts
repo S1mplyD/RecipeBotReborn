@@ -7,3 +7,12 @@ export type GuildType = {
   recipe_lang: string;
   premium: boolean;
 };
+
+export type RecipeType = {
+  url: string;
+  img: string;
+  name: string;
+  category: string;
+  desc: string;
+  lang: string;
+};
