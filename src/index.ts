@@ -4,12 +4,14 @@ import { config } from "dotenv";
 import path, { resolve } from "path";
 import fs from "fs";
 import mongoose from "mongoose";
-import { createGuild, getAllGuilds } from "./database/querys/guild";
+import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
+import guildModel from "./database/schema/guild.model";
+import { startAllTimer } from "./utils/timers";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
-const client = new CustomClient();
+export const client = new CustomClient();
 client.setupInteractionHandler();
 
 const foldersPath = path.join(__dirname, "commands");
@@ -33,8 +35,18 @@ for (const folder of commandFolders) {
   }
 }
 
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
+  //Controllo i server che usano il bot
+
+  const gilde = client.guilds.cache;
+  gilde.forEach(async (guild) => {
+    const guilddb: GuildType | Error = await getGuildByGuildId(guild.id);
+    if (guilddb instanceof Error) {
+      await createGuild(guild.id, guild.name, guild.memberCount);
+    }
+  });
+  await startAllTimer(client);
 });
 
 client.on("guildCreate", async (guild) => {
@@ -48,6 +60,18 @@ client.on("guildCreate", async (guild) => {
     console.log(newGuild);
   } catch (error) {
     console.log(error);
+  }
+});
+
+client.on("guildDelete", async (guild) => {
+  // Qui puoi eseguire l'operazione di eliminazione nel database
+  try {
+    await guildModel.findOneAndDelete({ guildId: guild.id });
+    console.log(
+      `Il bot è stato rimosso dalla gilda con ID: ${guild.id}, record eliminato dal database.`
+    );
+  } catch (error) {
+    console.error("Errore durante l'eliminazione del record:", error);
   }
 });
 
