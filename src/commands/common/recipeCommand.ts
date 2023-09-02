@@ -19,52 +19,52 @@ module.exports = {
   async execute(interaction: CommandInteraction, guild: GuildType) {
     const args = interaction.options.get("name");
 
-    if(!args){
-        const recipeEmbed = new EmbedBuilder()
-      .setTitle("Ricetta casuale")
-      .setColor(constants.message.color)
-      .setDescription("Lorem Ipsum");
+    if (!args) {
+      const recipeEmbed = new EmbedBuilder()
+        .setTitle("Ricetta casuale")
+        .setColor(constants.message.color)
+        .setDescription("Lorem Ipsum");
 
       await interaction.reply({ embeds: [recipeEmbed] });
     } else {
-    let recipeName = args?.value as string;
-    console.log("Recipe Name:", recipeName)
-    const name = await getRecipeName(recipeName);
-    console.log("db name:", name);
-    if (name) {
-      const recipeEmbed = new EmbedBuilder()
-        .setTitle(name)
-        .setColor(constants.message.color)
-        .setFields([
-          {
-            name: "Regular field title",
-            value: "Some value here",
-          },
-          {
-            name: "\u200b",
-            value: "\u200b",
-            inline: false,
-          },
-          {
-            name: "Inline field title",
-            value: "Some value here",
-            inline: true,
-          },
-          {
-            name: "Inline field title",
-            value: "Some value here",
-            inline: true,
-          },
-          {
-            name: "Inline field title",
-            value: "Some value here",
-            inline: true,
-          },
-        ]);
-    //   .setImage(/*IMMAGINE RICETTA*/)
-    //   .setURL(/*LINK ALLA RICETTA*/);
-      await interaction.reply({ embeds: [recipeEmbed], ephemeral: true });
-    } else await interaction.reply("No matching recipe name found");
-    } 
+      let recipeName = args?.value as string;
+      console.log("Recipe Name:", recipeName);
+      const recipe = await getRecipeName(recipeName);
+      if (recipe) {
+        console.log("db name:", recipe.name);
+        const recipeEmbed = new EmbedBuilder()
+          .setTitle(recipe.name)
+          .setColor(constants.message.color)
+          .setFields([
+            {
+              name: "Regular field title",
+              value: "Some value here",
+            },
+            {
+              name: "\u200b",
+              value: "\u200b",
+              inline: false,
+            },
+            {
+              name: "Inline field title",
+              value: "Some value here",
+              inline: true,
+            },
+            {
+              name: "Inline field title",
+              value: "Some value here",
+              inline: true,
+            },
+            {
+              name: "Inline field title",
+              value: "Some value here",
+              inline: true,
+            },
+          ]);
+        //   .setImage(/*IMMAGINE RICETTA*/)
+        //   .setURL(/*LINK ALLA RICETTA*/);
+        await interaction.reply({ embeds: [recipeEmbed], ephemeral: true });
+      } else await interaction.reply("No matching recipe name found");
+    }
   },
 };
