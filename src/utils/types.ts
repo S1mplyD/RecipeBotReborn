@@ -16,3 +16,17 @@ export type RecipeType = {
   desc: string;
   lang: string;
 };
+
+export type TimerType = {
+  guildId: string;
+  channelId: string;
+  time: number;
+  status: boolean;
+  lang: string;
+};
+
+export type Interval = {
+  interval: NodeJS.Timeout;
+  channelId: string;
+  guildId: string;
+};
