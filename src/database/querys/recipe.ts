@@ -8,10 +8,18 @@ export async function getCategories(lang: string) {
   return categories;
 }
 
+/**
+ * Function that find a recipe if the value {name} is included in the name or in the description
+ * @param name research value
+ * @returns RecipeType
+ */
 export async function getRecipeName(name: string) {
-  const recipe: RecipeType | null = await recipeModel.findOne({
-    name: name,
+  const recipes: RecipeType[] | null = await recipeModel.find({
+    $or: [
+      { name: { $regex: name, $options: "i" } },
+      { desc: { $regex: name, $options: "i" } },
+    ],
   });
-  if (!recipe) return null;
-  else return recipe.name;
+  if (recipes.length < 1) return null;
+  else return recipes[Math.floor(Math.random() * (recipes.length - 0 + 1)) + 0];
 }
