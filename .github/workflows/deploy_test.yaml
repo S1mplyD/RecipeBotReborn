@@ -35,9 +35,11 @@ jobs:
       env: 
         TOKEN: ${{ secrets.TOKEN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        MONGO_URL: ${{ secrets.CLIENT_ID }}
         
     - name: Deploy
       run: npm run deploy
       env: 
         TOKEN: ${{ secrets.TOKEN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        MONGO_URL: ${{ secrets.CLIENT_ID }}
