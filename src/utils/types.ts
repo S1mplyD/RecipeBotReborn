@@ -25,6 +25,11 @@ export type TimerType = {
   lang: string;
 };
 
+export type UserType = {
+  userId: string;
+  favoriteRecipes: string[];
+};
+
 export type Interval = {
   interval: NodeJS.Timeout;
   channelId: string;
