@@ -1,9 +1,22 @@
-import { CommandInteraction, EmbedBuilder } from "discord.js";
+import {
+  ActionRow,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  CommandInteraction,
+  EmbedBuilder,
+} from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-import { GuildType, RecipeType } from "../../utils/types";
+import { GuildType, RecipeType, UserType } from "../../utils/types";
 import constants from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
 import { getRandomRecipe, getRecipeName } from "../../database/querys/recipe";
+import {
+  addRecipeToUserFavourite,
+  createUser,
+  getUser,
+} from "../../database/querys/user";
+import { getUnpackedSettings } from "http2";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -28,7 +41,40 @@ module.exports = {
           .setColor(constants.message.color)
           .setDescription(recipe.desc);
 
-        await interaction.reply({ embeds: [recipeEmbed] });
+        const button = new ButtonBuilder()
+          .setCustomId("add")
+          .setLabel("Add")
+          .setStyle(ButtonStyle.Primary)
+          .setEmoji("⭐");
+
+        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+
+        const response = await interaction.reply({
+          embeds: [recipeEmbed],
+          components: [row],
+        });
+        const collectorFilter = (i) => i.user.id === interaction.user.id;
+        try {
+          const confirmation = await response.awaitMessageComponent({
+            filter: collectorFilter,
+            time: 60000,
+          });
+          const user: UserType | Error = await getUser(interaction.user.id);
+          if (user instanceof Error) await createUser(interaction.user.id);
+          if (confirmation.customId === "add") {
+            await addRecipeToUserFavourite(interaction.user.id, recipe.url);
+            confirmation.update({
+              content: `Recipe ${recipe.name} added to favorites`,
+            });
+          } else {
+            interaction.reply("error occurred");
+          }
+        } catch (e) {
+          await interaction.reply({
+            content: "Confirmation not received within 1 minute, cancelling",
+            components: [],
+          });
+        }
       }
     } else {
       let recipeName = args?.value as string;
