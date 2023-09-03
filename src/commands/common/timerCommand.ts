@@ -49,7 +49,8 @@ module.exports = {
             args.value as number,
             guild.lang
           );
-          if (!newTimer) console.error("timer not found");
+          if (newTimer instanceof Error)
+            interaction.reply("Timer must be at least 1 hour!");
           else {
             await startTimer(newTimer, client, true);
             interaction.reply("timer started");
