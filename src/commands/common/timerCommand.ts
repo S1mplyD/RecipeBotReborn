@@ -10,6 +10,7 @@ import {
 } from "../../database/querys/timers";
 import { client } from "../..";
 
+const hourMultiplier = 1000 * 60 * 60;
 module.exports = {
   data: new SlashCommandBuilder()
     .setName("timer")
@@ -23,7 +24,10 @@ module.exports = {
 
     if (!args) {
       const timer = await getTimerByGuildId(interaction.guildId!);
-      if (timer) interaction.reply(`current timer ${timer.time}`);
+      if (timer)
+        interaction.reply(
+          `current timer is set at ${timer.time / hourMultiplier} hours`
+        );
       else interaction.reply("add time after command");
     } else {
       console.log(args.type);
@@ -57,7 +61,6 @@ module.exports = {
           }
         } else {
           await updateTimer(timer, args.value as number);
-          await stopTimer(timer);
           const newTimer: TimerType | null = await getTimerByGuildId(
             timer.guildId
           );

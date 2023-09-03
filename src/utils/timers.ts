@@ -4,7 +4,6 @@ import { getAllTimers, setTimerStatus } from "../database/querys/timers";
 import { Interval, RecipeType, TimerType } from "./types";
 import constants from "./constants";
 import { getRandomRecipe } from "../database/querys/recipe";
-import { channel } from "diagnostics_channel";
 
 var intervals: Array<Interval> = [];
 
@@ -19,7 +18,6 @@ export async function startAllTimer(client: CustomClient) {
   }
 }
 
-const hourMultiplier = 1000 * 60 * 60;
 export async function startTimer(
   timer: TimerType,
   client: CustomClient,
@@ -44,7 +42,7 @@ export async function startTimer(
           await channel.send({ embeds: [recipeEmbed] });
         }
       }
-    }, (timer.time as number) * hourMultiplier);
+    }, timer.time as number);
     await setTimerInterval(interval, timer.channelId, timer.guildId);
   }
 }
