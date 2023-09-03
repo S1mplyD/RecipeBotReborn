@@ -14,7 +14,11 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    # services:
+    #   mongo:
+    #     image: mongo
+    #     env:
+    #       MONGO_URL: ${{ secrets.}}
     strategy:
       matrix:
         node-version: [17.x, 18.x]
@@ -35,11 +39,11 @@ jobs:
       env: 
         TOKEN: ${{ secrets.TOKEN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        MONGO_URL: ${{ secrets.CLIENT_ID }}
+        MONGO_URL: ${{ secrets.MONGO_URL }}
         
     - name: Deploy
       run: npm run deploy
       env: 
         TOKEN: ${{ secrets.TOKEN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
-        MONGO_URL: ${{ secrets.CLIENT_ID }}
+        MONGO_URL: ${{ secrets.MONGO_URL }}
