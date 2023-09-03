@@ -11,9 +11,11 @@ export async function createTimer(
   channelId: string,
   time: number,
   lang: string
-) {
+): Promise<TimerType | string> {
   if (time < 1) {
-    return new Error("Timer must be at least one hour!");
+    return "Timer must be at least one hour!";
+  } else if (time > 24) {
+    return "Timer can't be more than 24 hours";
   } else {
     const newTimer: TimerType | null = await timerModel.create({
       guildId: guildId,
@@ -22,9 +24,14 @@ export async function createTimer(
       time: time * hourMultiplier,
       status: true,
     });
-    return newTimer;
+    if (newTimer) {
+      return newTimer;
+    } else {
+      return "Failed to create timer";
+    }
   }
 }
+
 
 export async function getTimerByGuildId(guildId: string) {
   const timer: TimerType | null = await timerModel.findOne({
@@ -49,10 +56,20 @@ export async function getTimerStatus(timer: TimerType) {
   if (timerT) return timerT.status;
 }
 
-export async function updateTimer(timer: TimerType, time: number) {
-  const update = await timerModel.updateOne(
-    { guildId: timer.guildId },
-    { time: time * hourMultiplier }
-  );
-  if (update.modifiedCount < 1) console.log("cannot update");
+export async function updateTimer(
+  timer: TimerType,
+  time: number
+): Promise<string | null> {
+  if (time < 1) {
+    return  "Timer must be at least 1 hour";
+  } else if (time > 24) {
+    return "Timer can't be more than 24 hour";
+  } else {
+    const update = await timerModel.updateOne(
+      { guildId: timer.guildId },
+      { time: time * hourMultiplier }
+    );
+    if (update.modifiedCount < 1) console.log("cannot update");
+    return null;
+  }
 }
