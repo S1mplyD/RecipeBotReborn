@@ -14,7 +14,7 @@ interface RecipeDocument extends Recipe, Document {}
 
 const recipeSchema = new Schema<RecipeDocument>({
   url: { type: String, required: true },
-  img: { type: String, required: true },
+  img: { type: String },
   name: { type: String, required: true },
   category: { type: String, required: true },
   desc: { type: String, required: true },

@@ -13,7 +13,6 @@ import loadLanguage from "../../utils/loadLanguage";
 import { updateGuildLanguage } from "../../database/querys/guild";
 import langs from "../../languages/index";
 
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
@@ -40,7 +39,6 @@ module.exports = {
     console.log("Command executed");
     const args = interaction.options.get("lang");
     console.log("Args:", args);
-
     if (!args) {
       let language = interaction.guildLocale as string;
       if (language === "en-US") language = "en";
@@ -49,15 +47,15 @@ module.exports = {
 
       const langSetEmbed = new EmbedBuilder()
         .setColor(constants.message.color)
-        .setDescription(languagePack.code.languages.title)
-        Object.entries(langs).forEach(([langCode, langInfo]) => {
-          const field = {
-            name: langInfo.name,
-            value: `\`/lang ${langCode}\``,
-            inline: true,
-          };
-          langSetEmbed.addFields(field);
-        });
+        .setDescription(languagePack.code.languages.title);
+      Object.entries(langs).forEach(([langCode, langInfo]) => {
+        const field = {
+          name: langInfo.name,
+          value: `\`/lang ${langCode}\``,
+          inline: true,
+        };
+        langSetEmbed.addFields(field);
+      });
       // Aggiungi altre opzioni di lingua qui
 
       await interaction.reply({ embeds: [langSetEmbed] });
