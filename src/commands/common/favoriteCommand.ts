@@ -1,4 +1,7 @@
 import {
+  APIActionRowComponent,
+  APIButtonComponent,
+  APIEmbed,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -29,8 +32,8 @@ module.exports = {
     if (recipes instanceof Error || recipes === undefined)
       interaction.reply("You have no favorite recipes");
     else {
-      let embeds: EmbedBuilder[] = [];
-      let rows: ActionRowBuilder<ButtonBuilder>[] = [];
+      let embeds: APIEmbed[] = [];
+      let components: APIActionRowComponent<APIButtonComponent>[] = [];
       for (let i = 0; i < recipes.length; i++) {
         const recipeEmbed = new EmbedBuilder()
           .setTitle(recipes[i].name)
@@ -41,39 +44,42 @@ module.exports = {
           .setLabel("Remove")
           .setStyle(ButtonStyle.Primary)
           .setEmoji("❌");
-
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
-        embeds.push(recipeEmbed);
-        rows.push(row);
+        embeds.push(recipeEmbed.toJSON() as APIEmbed);
+        components.push({
+          type: 1,
+          components: [button.toJSON() as APIButtonComponent],
+        });
       }
 
-      const response = await interaction.reply({
+      // Combina tutti i bottoni in un'unica riga di azione
+
+      // Invia un'unica risposta contenente il combinedEmbed e l'actionRow
+      await interaction.reply({
         embeds: embeds,
-        components: rows,
-        ephemeral: true,
+        components: components,
       });
-      const collectorFilter = (i) => i.user.id === interaction.user.id;
-      try {
-        const confirmation = await response.awaitMessageComponent({
-          filter: collectorFilter,
-          time: 60000,
-        });
-        const user: UserType | Error = await getUser(interaction.user.id);
-        if (user instanceof Error) await createUser(interaction.user.id);
-        if (confirmation.customId === "remove") {
-          //   await removeRecipeFromFavourite(interaction.user.id, recipe.url);
-          confirmation.update({
-            content: `Recipe removed`,
-          });
-        } else {
-          interaction.reply("error occurred");
-        }
-      } catch (e) {
-        await interaction.reply({
-          content: "Confirmation not received within 1 minute, cancelling",
-          components: [],
-        });
-      }
+      // const collectorFilter = (i) => i.user.id === interaction.user.id;
+      // try {
+      //   const confirmation = await response.awaitMessageComponent({
+      //     filter: collectorFilter,
+      //     time: 60000,
+      //   });
+      //   const user: UserType | Error = await getUser(interaction.user.id);
+      //   if (user instanceof Error) await createUser(interaction.user.id);
+      //   if (confirmation.customId === "remove") {
+      //     //   await removeRecipeFromFavourite(interaction.user.id, recipe.url);
+      //     confirmation.update({
+      //       content: `Recipe removed`,
+      //     });
+      //   } else {
+      //     interaction.reply("error occurred");
+      //   }
+      // } catch (e) {
+      //   await interaction.reply({
+      //     content: "Confirmation not received within 1 minute, cancelling",
+      //     components: [],
+      //   });
+      // }
     }
   },
 };
