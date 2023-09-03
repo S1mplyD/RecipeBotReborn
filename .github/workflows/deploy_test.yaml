@@ -14,10 +14,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    # services:
+    #   mongo:
+    #     image: mongo
+    #     env:
+    #       MONGO_URL: ${{ secrets.}}
     strategy:
       matrix:
-        node-version: [17.5.x, 18.x]
+        node-version: [17.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -35,9 +39,11 @@ jobs:
       env: 
         TOKEN: ${{ secrets.TOKEN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        MONGO_URL: ${{ secrets.MONGO_URL }}
         
     - name: Deploy
       run: npm run deploy
       env: 
         TOKEN: ${{ secrets.TOKEN }}
         CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        MONGO_URL: ${{ secrets.MONGO_URL }}
