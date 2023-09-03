@@ -4,7 +4,6 @@ import { getAllTimers, setTimerStatus } from "../database/querys/timers";
 import { Interval, RecipeType, TimerType } from "./types";
 import constants from "./constants";
 import { getRandomRecipe } from "../database/querys/recipe";
-import { channel } from "diagnostics_channel";
 
 var intervals: Array<Interval> = [];
 

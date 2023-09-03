@@ -1,6 +1,6 @@
 import { TimerType } from "../../utils/types";
 import timerModel from "../schema/timers.model";
-
+const hourMultiplier = 1000 * 60 * 60;
 export async function getAllTimers() {
   const timers: TimerType[] | null = await timerModel.find();
   return timers;
@@ -12,14 +12,18 @@ export async function createTimer(
   time: number,
   lang: string
 ) {
-  const newTimer: TimerType | null = await timerModel.create({
-    guildId: guildId,
-    channelId: channelId,
-    lang: lang,
-    time: time,
-    status: true,
-  });
-  return newTimer;
+  if (time < 1) {
+    return new Error("Timer must be at least one hour!");
+  } else {
+    const newTimer: TimerType | null = await timerModel.create({
+      guildId: guildId,
+      channelId: channelId,
+      lang: lang,
+      time: time * hourMultiplier,
+      status: true,
+    });
+    return newTimer;
+  }
 }
 
 export async function getTimerByGuildId(guildId: string) {
@@ -48,7 +52,7 @@ export async function getTimerStatus(timer: TimerType) {
 export async function updateTimer(timer: TimerType, time: number) {
   const update = await timerModel.updateOne(
     { guildId: timer.guildId },
-    { time: time }
+    { time: time * hourMultiplier }
   );
   if (update.modifiedCount < 1) console.log("cannot update");
 }
