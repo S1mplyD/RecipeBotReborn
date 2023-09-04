@@ -37,8 +37,7 @@ module.exports = {
   async execute(interaction: CommandInteraction, guild: GuildType) {
     const args = interaction.options.get("lang");
     if (!args) {
-      let language = interaction.guildLocale as string;
-      if (language === "en-US") language = "en";
+      let language = guild.lang;
 
       const languagePack = loadLanguage(language);
 
@@ -61,11 +60,16 @@ module.exports = {
       if (AviableLanguages.includes(newLang)) {
         await updateGuildLanguage(interaction.guildId!, newLang);
         await interaction.reply({
-          content: `Language set to ***${newLang}***  ${LanguageToEmote[newLang]}` || "Language set",
+          content:
+            `Language set to ***${newLang}***  ${LanguageToEmote[newLang]}` ||
+            "Language set",
           ephemeral: true,
         });
       } else {
-        await interaction.reply({ content: "Error: Cannot edit language", ephemeral: true });
+        await interaction.reply({
+          content: "Error: Cannot edit language",
+          ephemeral: true,
+        });
       }
     }
   },
