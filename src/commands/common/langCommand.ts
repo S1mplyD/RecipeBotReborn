@@ -18,7 +18,7 @@ module.exports = {
     .setDMPermission(false) // Command will not work in dm
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
     .setName("lang")
-    .setDescription("Set the bot language")
+    .setDescription("Set the bot and recipes language")
     .addStringOption((option) => {
       option
         .setName("lang")
