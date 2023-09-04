@@ -15,21 +15,22 @@ module.exports = {
     const permissionError = checkPermissions(interaction);
 
     if (!permissionError) {
-    const languagePack = loadLanguage(guild.lang);
-    const categories = await getCategories(guild.recipe_lang);
-    let str = "";
-    if (categories.length < 1) str = "No categories found";
-    else {
-      for (let i = 0; i < categories.length; i++) {
-        str += `${i + 1}) ${categories[i]}\n`;
+      const languagePack = loadLanguage(guild.lang);
+      const categories = await getCategories(guild.lang);
+      let str = "";
+      if (categories.length < 1) str = "No categories found";
+      else {
+        for (let i = 0; i < categories.length; i++) {
+          str += `${i + 1}) ${categories[i]}\n`;
+        }
       }
-    }
 
-    const list = new EmbedBuilder()
-      .setTitle(languagePack.code.categoryList.title)
-      .setColor(constants.message.color)
-      .setDescription(str);
-    await interaction.reply({ embeds: [list] });
-  } else await interaction.reply({ content: permissionError, ephemeral: true });
+      const list = new EmbedBuilder()
+        .setTitle(languagePack.code.categoryList.title)
+        .setColor(constants.message.color)
+        .setDescription(str);
+      await interaction.reply({ embeds: [list] });
+    } else
+      await interaction.reply({ content: permissionError, ephemeral: true });
   },
 };
