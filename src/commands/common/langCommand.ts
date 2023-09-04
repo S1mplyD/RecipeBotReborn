@@ -38,8 +38,7 @@ module.exports = {
   async execute(interaction: CommandInteraction, guild: GuildType) {
     const args = interaction.options.get("lang");
     if (!args) {
-      let language = interaction.guildLocale as string;
-      if (language === "en-US") language = "en";
+      let language = guild.lang;
 
       const languagePack = loadLanguage(language);
 
