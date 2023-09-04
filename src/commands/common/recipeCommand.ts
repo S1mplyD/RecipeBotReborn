@@ -70,10 +70,7 @@ module.exports = {
             interaction.reply("error occurred");
           }
         } catch (e) {
-          await interaction.reply({
-            content: "Confirmation not received within 1 minute, cancelling",
-            components: [],
-          });
+          console.log(e);
         }
       }
     } else {
