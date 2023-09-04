@@ -75,25 +75,48 @@ module.exports = {
             // ###   SET TIMER OFF    ###
             // ##########################
 
-            // And check if guild has a timer
-            if (timer) {
-              await stopTimer(timer);
-              interaction.reply({ content: "Timer stopped", ephemeral: true });
-            } else
-              interaction.reply({ content: "No timer found", ephemeral: true }); // Guild has no timer
+            try {
+              // And check if guild has a timer
+              if (timer) {
+                await stopTimer(timer);
+                interaction.reply({
+                  content: "Timer stopped",
+                  ephemeral: true,
+                });
+              } else
+                interaction.reply({
+                  content: "No timer found",
+                  ephemeral: true,
+                }); // Guild has no timer
+            } catch (error) {
+              console.log(error);
+              interaction.reply("Something went wrong");
+            }
           } else if (lowerCaseArgs === "on") {
             // ##########################
             // ###    SET TIMER ON    ###
             // ##########################
 
             // And check if guild has a timer
-            if (timer) {
-              await setTimerStatus(timer, true);
-              await startTimer(timer, client, true);
-              interaction.reply({ content: "Timer started", ephemeral: true });
-            } else
-              interaction.reply({ content: "No timer found", ephemeral: true }); // Guild has no timer
+            try {
+              if (timer) {
+                await setTimerStatus(timer, true);
+                await startTimer(timer, client, true);
+                interaction.reply({
+                  content: "Timer started",
+                  ephemeral: true,
+                });
+              } else
+                interaction.reply({
+                  content: "No timer found",
+                  ephemeral: true,
+                }); // Guild has no timer
+            } catch (e) {
+              console.log(e);
+              interaction.reply("Something went wrong");
+            }
           }
+
           // All other cases where timer is neither "off" nor "on" -> "args" is a number
           else {
             if (!timer) {
