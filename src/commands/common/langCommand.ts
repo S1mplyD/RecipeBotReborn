@@ -15,6 +15,7 @@ import langs from "../../languages/index";
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDMPermission(false) // Command will not work in dm
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
     .setName("lang")
     .setDescription("Set the bot language")
@@ -61,11 +62,16 @@ module.exports = {
       if (AviableLanguages.includes(newLang)) {
         await updateGuildLanguage(interaction.guildId!, newLang);
         await interaction.reply({
-          content: `Language set to ***${newLang}***  ${LanguageToEmote[newLang]}` || "Language set",
+          content:
+            `Language set to ***${newLang}***  ${LanguageToEmote[newLang]}` ||
+            "Language set",
           ephemeral: true,
         });
       } else {
-        await interaction.reply({ content: "Error: Cannot edit language", ephemeral: true });
+        await interaction.reply({
+          content: "Error: Cannot edit language",
+          ephemeral: true,
+        });
       }
     }
   },
