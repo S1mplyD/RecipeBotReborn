@@ -14,11 +14,6 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-    # services:
-    #   mongo:
-    #     image: mongo
-    #     env:
-    #       MONGO_URL: ${{ secrets.}}
     strategy:
       matrix:
         node-version: [18.x]
