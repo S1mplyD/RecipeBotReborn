@@ -15,6 +15,7 @@ import langs from "../../languages/index";
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDMPermission(false) // Command will not work in dm
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
     .setName("lang")
     .setDescription("Set the bot language")

@@ -4,12 +4,17 @@ import { GuildType } from "../../utils/types";
 import constants from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
 import { getCategories } from "../../database/querys/recipe";
+import { checkPermissions } from "../../utils/checkPermissions";
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDMPermission(false) // Command will not work in dm
     .setName("list")
     .setDescription("Show the list of categories"),
   async execute(interaction: CommandInteraction, guild: GuildType) {
+    const permissionError = checkPermissions(interaction);
+
+    if (!permissionError) {
     const languagePack = loadLanguage(guild.lang);
     const categories = await getCategories(guild.recipe_lang);
     let str = "";
@@ -25,5 +30,6 @@ module.exports = {
       .setColor(constants.message.color)
       .setDescription(str);
     await interaction.reply({ embeds: [list] });
+  } else await interaction.reply({ content: permissionError, ephemeral: true });
   },
 };
