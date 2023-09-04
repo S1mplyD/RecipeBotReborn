@@ -3,7 +3,9 @@ import { CustomClient } from "../client/client";
 import { getAllTimers, setTimerStatus } from "../database/querys/timers";
 import { Interval, RecipeType, TimerType } from "./types";
 import constants from "./constants";
+const hourMultiplier = 1000 * 60 * 60;
 import { getRandomRecipe } from "../database/querys/recipe";
+import { updateTimer } from "../database/querys/timers";
 
 var intervals: Array<Interval> = [];
 
@@ -12,8 +14,12 @@ export async function startAllTimer(client: CustomClient) {
   const timers: TimerType[] | null = await getAllTimers();
   if (!timers) console.error("no timers");
   if (Array.isArray(timers)) {
-    for (let i of timers) {
-      await startTimer(i, client, i.status);
+    for (let timer of timers) {
+      if (timer.time < 1 * hourMultiplier || timer.time > 24 * hourMultiplier) {
+        timer.time = 1 * hourMultiplier;
+        await updateTimer(timer, timer.time);
+      }
+      await startTimer(timer, client, timer.status);
     }
   }
 }
