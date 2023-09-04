@@ -4,6 +4,7 @@ import {
   ButtonStyle,
   CommandInteraction,
   EmbedBuilder,
+  ReactionUserManager,
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, RecipeType, UserType } from "../../utils/types";
@@ -89,6 +90,9 @@ module.exports = {
         let recipeName = args?.value as string;
         console.log("Recipe Name:", recipeName);
         const recipe = await getRecipeName(recipeName, guild.lang);
+        if (recipe) {
+          if (recipe?.featuredData.length > 0) console.log(" balls");
+        }
         if (recipe) {
           console.log("db name:", recipe.name);
           const recipeEmbed = new EmbedBuilder()
