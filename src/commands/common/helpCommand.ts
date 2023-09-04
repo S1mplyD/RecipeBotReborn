@@ -7,6 +7,7 @@ import { getGuildLang } from "../../database/querys/guild";
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDMPermission(false) // Command will not work in dm
     .setName("help")
     .setDescription("Show RecipeBot commands"),
   async execute(interaction: CommandInteraction, guild: GuildType) {
@@ -79,7 +80,6 @@ module.exports = {
       )
       .setFooter({ text: languagePack.code.help.footer });
 
-    await interaction.reply({ embeds: [helpEmbed],
-        ephemeral: true,});
+    await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
   },
 };

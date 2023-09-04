@@ -32,12 +32,10 @@ export async function startTimer(
   let interval: NodeJS.Timeout;
   const channel = await client.channels.fetch(timer.channelId);
   if (status === true) {
-    console.log("molto bello");
 
     interval = setInterval(async () => {
       if (channel && channel.isTextBased()) {
         const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
-        console.log(recipe);
         if (!recipe) channel.send("not found");
         else {
           const recipeEmbed = new EmbedBuilder()

@@ -15,9 +15,10 @@ import langs from "../../languages/index";
 
 module.exports = {
   data: new SlashCommandBuilder()
+    .setDMPermission(false) // Command will not work in dm
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageChannels) // Requires the "ManageChannels" permission to see the command (eg: Mods)
     .setName("lang")
-    .setDescription("Set the bot language")
+    .setDescription("Set the bot and recipes language")
     .addStringOption((option) => {
       option
         .setName("lang")
@@ -53,7 +54,7 @@ module.exports = {
         langSetEmbed.addFields(field);
       });
 
-      await interaction.reply({ embeds: [langSetEmbed] });
+      await interaction.reply({ embeds: [langSetEmbed], ephemeral: true });
     } else {
       const newLang = args.value as string;
 

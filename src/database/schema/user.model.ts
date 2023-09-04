@@ -1,5 +1,4 @@
 import { Schema, model, Document } from "mongoose";
-import { RecipeType } from "../../utils/types";
 
 interface User {
   userId: string;
