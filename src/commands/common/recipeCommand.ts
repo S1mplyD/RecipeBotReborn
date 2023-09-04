@@ -1,5 +1,4 @@
 import {
-  ActionRow,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
@@ -9,14 +8,12 @@ import {
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, RecipeType, UserType } from "../../utils/types";
 import constants from "../../utils/constants";
-import loadLanguage from "../../utils/loadLanguage";
 import { getRandomRecipe, getRecipeName } from "../../database/querys/recipe";
 import {
   addRecipeToUserFavourite,
   createUser,
   getUser,
 } from "../../database/querys/user";
-import { getUnpackedSettings } from "http2";
 
 module.exports = {
   data: new SlashCommandBuilder()
