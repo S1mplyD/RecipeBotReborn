@@ -11,7 +11,6 @@ import {
   createUser,
   getAllUserFavourites,
   getUser,
-  removeRecipeFromFavourite,
 } from "../../database/querys/user";
 import constants from "../../utils/constants";
 
@@ -26,54 +25,102 @@ module.exports = {
     }
     const recipes: RecipeType[] | Error | undefined =
       await getAllUserFavourites(interaction.user.id);
-    if (recipes instanceof Error || recipes === undefined)
+    if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
       interaction.reply("You have no favorite recipes");
     else {
-      let embeds: EmbedBuilder[] = [];
-      let rows: ActionRowBuilder<ButtonBuilder>[] = [];
-      for (let i = 0; i < recipes.length; i++) {
-        const recipeEmbed = new EmbedBuilder()
-          .setTitle(recipes[i].name)
-          .setColor(constants.message.color)
-          .setDescription(recipes[i].desc);
-        const button = new ButtonBuilder()
-          .setCustomId("remove" + i)
-          .setLabel("Remove")
-          .setStyle(ButtonStyle.Primary)
-          .setEmoji("❌");
-
-        const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
-        embeds.push(recipeEmbed);
-        rows.push(row);
+      let page = 0;
+      let chunk: number[] = [];
+      for (let i = 0; i < recipes.length; i += 5) {
+        chunk.push(Math.min(5, recipes.length - i));
       }
+      const totalPages = chunk.length > 0 ? chunk.length - 1 : 0;
+      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+        new ButtonBuilder()
+          .setCustomId("backwards")
+          .setEmoji("◀️")
+          .setStyle(ButtonStyle.Secondary),
+        new ButtonBuilder()
+          .setCustomId("forward")
+          .setEmoji("▶️")
+          .setStyle(ButtonStyle.Success)
+      );
 
-      const response = await interaction.reply({
-        embeds: embeds,
-        components: rows,
+      const embedMessage = async (page) => {
+        let embeds: EmbedBuilder[] = [];
+        console.log(chunk[page]);
+
+        for (let i = 0; i < chunk[page]; i++) {
+          console.log(recipes[i + page * 5]);
+
+          const recipeEmbed = new EmbedBuilder()
+            .setTitle(recipes[i + page * 5].name)
+            .setColor(constants.message.color)
+            .setDescription(recipes[i + page * 5].desc);
+          embeds.push(recipeEmbed);
+        }
+        return embeds;
+      };
+      row.components[0].setDisabled(true);
+      if (page === totalPages) {
+        row.components[1].setDisabled(true);
+      }
+      await interaction.reply({
+        embeds: await embedMessage(page),
+        components: [row],
         ephemeral: true,
       });
-      const collectorFilter = (i) => i.user.id === interaction.user.id;
-      try {
-        const confirmation = await response.awaitMessageComponent({
-          filter: collectorFilter,
-          time: 60000,
-        });
-        const user: UserType | Error = await getUser(interaction.user.id);
-        if (user instanceof Error) await createUser(interaction.user.id);
-        if (confirmation.customId === "remove") {
-          //   await removeRecipeFromFavourite(interaction.user.id, recipe.url);
-          confirmation.update({
-            content: `Recipe removed`,
-          });
-        } else {
-          interaction.reply("error occurred");
+      const filter = (i) =>
+        (i.customId === "forward" || i.customId === "backwards") &&
+        i.user.id === interaction.user.id;
+
+      const collector = interaction.channel!.createMessageComponentCollector({
+        filter,
+        time: 30000,
+      });
+
+      collector.on("collect", async (i) => {
+        try {
+          if (i.customId === "forward") {
+            // page = (page % totalPages) + 1; // wrap around if exceeding last page
+            page++;
+            if (page === 0) {
+              row.components[0].setDisabled(true);
+              row.components[1].setDisabled(false);
+            } else if (page === totalPages) {
+              row.components[0].setDisabled(false);
+              row.components[1].setDisabled(true);
+            } else {
+              row.components[0].setDisabled(false);
+              row.components[1].setDisabled(false);
+            }
+            await i.deferUpdate();
+            await interaction.editReply({
+              embeds: await embedMessage(page),
+              components: [row],
+            });
+          }
+          if (i.customId === "backwards") {
+            page--;
+            if (page === 0) {
+              row.components[0].setDisabled(true);
+              row.components[1].setDisabled(false);
+            } else if (page === totalPages) {
+              row.components[0].setDisabled(false);
+              row.components[1].setDisabled(true);
+            } else {
+              row.components[0].setDisabled(false);
+              row.components[1].setDisabled(false);
+            }
+            await i.deferUpdate();
+            await interaction.editReply({
+              embeds: await embedMessage(page),
+              components: [row],
+            });
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (e) {
-        await interaction.reply({
-          content: "Confirmation not received within 1 minute, cancelling",
-          components: [],
-        });
-      }
+      });
     }
   },
 };
