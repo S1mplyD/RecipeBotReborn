@@ -79,12 +79,12 @@ module.exports = {
               // And check if guild has a timer
               if (timer) {
                 await stopTimer(timer);
-                interaction.reply({
+                await interaction.reply({
                   content: "Timer stopped",
                   ephemeral: true,
                 });
               } else
-                interaction.reply({
+                await interaction.reply({
                   content: "No timer found",
                   ephemeral: true,
                 }); // Guild has no timer
@@ -102,12 +102,12 @@ module.exports = {
               if (timer) {
                 await setTimerStatus(timer, true);
                 await startTimer(timer, client, true);
-                interaction.reply({
+                await interaction.reply({
                   content: "Timer started",
                   ephemeral: true,
                 });
               } else
-                interaction.reply({
+                await interaction.reply({
                   content: "No timer found",
                   ephemeral: true,
                 }); // Guild has no timer
