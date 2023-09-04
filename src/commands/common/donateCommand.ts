@@ -7,6 +7,9 @@ module.exports = {
     .setName("donate")
     .setDescription("Support this project by donating any amount!"),
   async execute(interaction: CommandInteraction) {
-    await interaction.reply("https://www.buymeacoffee.com/RecipeBot");
+    await interaction.reply({
+      content: "https://www.buymeacoffee.com/RecipeBot",
+      ephemeral: true,
+    });
   },
 };

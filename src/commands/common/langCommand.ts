@@ -54,7 +54,7 @@ module.exports = {
         langSetEmbed.addFields(field);
       });
 
-      await interaction.reply({ embeds: [langSetEmbed] });
+      await interaction.reply({ embeds: [langSetEmbed], ephemeral: true });
     } else {
       const newLang = args.value as string;
 
