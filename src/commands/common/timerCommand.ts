@@ -68,10 +68,12 @@ module.exports = {
           await interaction.editReply({ content: reply });
         }
         // (1) Otherwise, prompt to add a timer
-        else await interaction.deferReply({ ephemeral: true });
-        await interaction.editReply({
-          content: lpcode.empty.name,
-        });
+        else {
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.editReply({
+            content: lpcode.empty.name,
+          });
+        }
       } else {
         // Command has no arguments
         const timer = await getTimerByGuildId(interaction.guildId!);
@@ -104,6 +106,7 @@ module.exports = {
 
             // And check if guild has a timer
             if (timer) {
+              await stopTimer(timer);
               await setTimerStatus(timer, true);
               await startTimer(timer, client, true);
               await interaction.deferReply({ ephemeral: true });
@@ -173,6 +176,7 @@ module.exports = {
                   );
 
                   // Start the updated timer
+                  await stopTimer(newTimer!);
                   await startTimer(newTimer!, client, true);
                   if (timer) {
                     const reply =
