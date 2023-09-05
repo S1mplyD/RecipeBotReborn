@@ -32,7 +32,6 @@ export async function createTimer(
   }
 }
 
-
 export async function getTimerByGuildId(guildId: string) {
   const timer: TimerType | null = await timerModel.findOne({
     guildId: guildId,
@@ -61,7 +60,7 @@ export async function updateTimer(
   time: number
 ): Promise<string | null> {
   if (time < 1) {
-    return  "Timer must be at least 1 hour";
+    return "Timer must be at least 1 hour";
   } else if (time > 24) {
     return "Timer can't be more than 24 hour";
   } else {

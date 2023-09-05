@@ -30,9 +30,9 @@ export async function startTimer(
   status: boolean
 ) {
   let interval: NodeJS.Timeout;
+
   const channel = await client.channels.fetch(timer.channelId);
   if (status === true) {
-
     interval = setInterval(async () => {
       if (channel && channel.isTextBased()) {
         const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
@@ -40,8 +40,15 @@ export async function startTimer(
         else {
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
+            .setImage(recipe.img)
             .setColor(constants.message.color)
-            .setDescription(recipe.desc);
+            .setDescription(recipe.desc)
+            .setURL(recipe.url)
+            .setTimestamp()
+            .setFooter({
+              text: "Category: " + recipe.category ?? " ",
+              iconURL: constants.botImage,
+            });
 
           await channel.send({ embeds: [recipeEmbed] });
         }

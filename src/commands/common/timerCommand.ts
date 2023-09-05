@@ -100,6 +100,7 @@ module.exports = {
             // And check if guild has a timer
             try {
               if (timer) {
+                await stopTimer(timer);
                 await setTimerStatus(timer, true);
                 await startTimer(timer, client, true);
                 await interaction.reply({
@@ -169,6 +170,7 @@ module.exports = {
                   );
 
                   // Start the updated timer
+                  await stopTimer(newTimer!);
                   await startTimer(newTimer!, client, true);
                   if (timer) {
                     const reply =
