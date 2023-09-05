@@ -1,6 +1,10 @@
 import { TimerType } from "../../utils/types";
 import timerModel from "../schema/timers.model";
+import loadLanguage from "../../utils/loadLanguage";
+import { getGuildLang } from "../../database/querys/guild";
+
 const hourMultiplier = 1000 * 60 * 60;
+
 export async function getAllTimers() {
   const timers: TimerType[] | null = await timerModel.find();
   return timers;
@@ -12,10 +16,13 @@ export async function createTimer(
   time: number,
   lang: string
 ): Promise<TimerType | string> {
+  const languagePack = loadLanguage(lang);
+  const lpcode = languagePack.code.timerError;
+
   if (time < 1) {
-    return "Timer must be at least one hour!";
+    return lpcode.less;
   } else if (time > 24) {
-    return "Timer can't be more than 24 hours";
+    return lpcode.more;
   } else {
     const newTimer: TimerType | null = await timerModel.create({
       guildId: guildId,
@@ -27,7 +34,7 @@ export async function createTimer(
     if (newTimer) {
       return newTimer;
     } else {
-      return "Failed to create timer";
+      return lpcode.failure;
     }
   }
 }
@@ -59,10 +66,16 @@ export async function updateTimer(
   timer: TimerType,
   time: number
 ): Promise<string | null> {
+  let lang: string | Error = await getGuildLang(timer.guildId);
+  if (lang instanceof Error) return lang.message;
+
+  const languagePack = loadLanguage(lang);
+  const lpcode = languagePack.code.timerError;
+
   if (time < 1) {
-    return "Timer must be at least 1 hour";
+    return lpcode.less;
   } else if (time > 24) {
-    return "Timer can't be more than 24 hour";
+    return lpcode.more;
   } else {
     const update = await timerModel.updateOne(
       { guildId: timer.guildId },

@@ -42,13 +42,24 @@ export async function startTimer(
             .setTitle(recipe.name)
             .setImage(recipe.img)
             .setColor(constants.message.color)
-            .setDescription(recipe.desc)
-            .setURL(recipe.url)
-            .setTimestamp()
-            .setFooter({
-              text: "Category: " + recipe.category ?? " ",
-              iconURL: constants.botImage,
+            .setDescription(recipe.desc);
+          try {
+            let featuredDataString = "";
+            recipe.featuredData.forEach((data, index) => {
+              if (index !== 0) {
+                featuredDataString += " | ";
+              }
+              featuredDataString += data;
             });
+
+            const field = {
+              name: "Tags:",
+              value: featuredDataString,
+              inline: true,
+            };
+
+            recipeEmbed.addFields(field);
+          } catch {}
 
           await channel.send({ embeds: [recipeEmbed] });
         }

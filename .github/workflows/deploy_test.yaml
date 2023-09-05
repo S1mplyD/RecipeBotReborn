@@ -8,15 +8,20 @@ name: Node.js CI
 
 on:
   push:
-    branches: [ "luca-testing" ]
+    branches: [ "dev-rex" ]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
+    # services:
+    #   mongo:
+    #     image: mongo
+    #     env:
+    #       MONGO_URL: ${{ secrets.}}
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [17.x, 18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
