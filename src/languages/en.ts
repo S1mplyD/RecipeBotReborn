@@ -24,30 +24,18 @@ export default <LanguageTranscription>{
       Name: "Change bot language",
       Value: '`lang "language"`',
     },
-    changeRecipeLanguage: {
-      Name: "Change recipe language",
-      Value: '`rlang "language"`',
-    },
-    changePrefix: {
-      Name: "Change prefix",
-      Value: '`prefix "symbol"`',
-    },
-    timerAdd: {
+    timer: {
       Name: "Set an auto-recipe timer",
       Value: '`time "hours"`',
-    },
-    timerOff: {
-      Name: "Turn OFF auto-recipe timer",
-      Value: "`time off`",
     },
     categoryList: {
       Name: "Shows the recipe categories list",
       Value: "`list`",
     },
-    showFavoriteList: {
-      Name: "Shows your favorites list",
-      Value: "`favorite`",
-    },
+    // showFavoriteList: {
+    //   Name: "Shows your favorites list",
+    //   Value: "`favorite`",
+    // },
     support: {
       Name: "Request support",
       Value: "`support`",
@@ -68,6 +56,11 @@ export default <LanguageTranscription>{
     footer: "Remember that recipes differ by language",
   },
 
+  recipe: {
+    tags: "Dietary tags",
+    category: "Category",
+  },
+
   favorite: {
     title: "Favorite recipes:",
     delete: {
@@ -81,6 +74,10 @@ export default <LanguageTranscription>{
 
   languages: {
     title: "**List of avaiable languages:**",
+    set: "Language set to",
+    setAlt: "Language set",
+    same: "Language is already set to",
+    error: "Error: Cannot edit language",
   },
 
   recipeLanguages: {
@@ -91,16 +88,27 @@ export default <LanguageTranscription>{
     title: "**Recipe categories list:**",
   },
 
-  time: {
+  timer: {
     empty: {
-      name: "No timer set",
+      name: "No timer set. please add a time amount (in hours) after the `/timer` command",
     },
     current: {
-      name: "Current timer:",
-      value: "hours",
+      name: "Current timer is set to",
+      valueOne: "hour",
+      valueMany: "hours",
     },
     invalid: {
-      name: "Invalid time value",
+      name: "Value",
+      value: "is not a valid timer argument",
     },
+    stopped: "Timer stopped",
+    started: "Timer started",
+    notFound: "No timer found",
+  },
+
+  timerError: {
+    less: "Time can't be less than 1 hour",
+    more: "Time can't be greater than 24 hours",
+    failure: "Failed to create timer",
   },
 };

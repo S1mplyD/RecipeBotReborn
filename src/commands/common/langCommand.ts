@@ -12,6 +12,7 @@ import constants, {
 import loadLanguage from "../../utils/loadLanguage";
 import { updateGuildLanguage } from "../../database/querys/guild";
 import langs from "../../languages/index";
+import { getGuildLang } from "../../database/querys/guild";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -36,12 +37,12 @@ module.exports = {
       return option;
     }),
   async execute(interaction: CommandInteraction, guild: GuildType) {
+    let language = guild.lang;
+    const languagePack = loadLanguage(language);
+    const lpcode = languagePack.code.languages;
+
     const args = interaction.options.get("lang");
     if (!args) {
-      let language = guild.lang;
-
-      const languagePack = loadLanguage(language);
-
       const langSetEmbed = new EmbedBuilder()
         .setColor(constants.message.color)
         .setDescription(languagePack.code.languages.title);
@@ -58,17 +59,26 @@ module.exports = {
     } else {
       const newLang = args.value as string;
 
-      if (AviableLanguages.includes(newLang)) {
-        await updateGuildLanguage(interaction.guildId!, newLang);
-        await interaction.reply({
-          content:
-            `Language set to ***${newLang}***  ${LanguageToEmote[newLang]}` ||
-            "Language set",
-          ephemeral: true,
-        });
+      if (language != newLang) {
+        if (AviableLanguages.includes(newLang)) {
+          await updateGuildLanguage(interaction.guildId!, newLang);
+          await interaction.reply({
+            content:
+              `${lpcode.set} ***${newLang}***  ${LanguageToEmote[newLang]}` ||
+              lpcode.setAlt,
+            ephemeral: true,
+          });
+        } else {
+          await interaction.reply({
+            content: lpcode.error,
+            ephemeral: true,
+          });
+        }
       } else {
         await interaction.reply({
-          content: "Error: Cannot edit language",
+          content:
+            `${lpcode.same} ***${newLang}***  ${LanguageToEmote[newLang]}` ||
+            lpcode.setAlt,
           ephemeral: true,
         });
       }

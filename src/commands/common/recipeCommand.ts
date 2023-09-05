@@ -17,6 +17,8 @@ import {
 } from "../../database/querys/user";
 import { getUnpackedSettings } from "http2";
 import { checkPermissions } from "../../utils/checkPermissions";
+import loadLanguage from "../../utils/loadLanguage";
+import { getGuildLang } from "../../database/querys/guild";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -31,6 +33,12 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction, guild: GuildType) {
+    let lang: string | Error = await getGuildLang(guild.guildId);
+    if (lang instanceof Error) return lang;
+
+    const languagePack = loadLanguage(lang);
+    const lpcode = languagePack.code.recipe;
+    
     const args = interaction.options.get("name");
     const permissionError = checkPermissions(interaction);
 
@@ -43,11 +51,30 @@ module.exports = {
             .setTitle(recipe.name)
             .setImage(recipe.img)
             .setColor(constants.message.color)
-            .setDescription(recipe.desc)
+            .setDescription(recipe.desc);
+
+          try {
+            let featuredDataString = "";
+            recipe.featuredData.forEach((data, index) => {
+              if (index !== 0) {
+                featuredDataString += " | ";
+              }
+              featuredDataString += data;
+            });
+
+            const field = {
+              name: lpcode.tags,
+              value: featuredDataString,
+              inline: true,
+            };
+
+            recipeEmbed.addFields(field);
+          } catch {}
+          recipeEmbed
             .setURL(recipe.url)
             .setTimestamp()
             .setFooter({
-              text: "Category: " + recipe.category ?? " ",
+              text: lpcode.category + ": " + recipe.category ?? " ",
               iconURL: constants.botImage,
             });
 

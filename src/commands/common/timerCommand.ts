@@ -11,6 +11,8 @@ import {
 } from "../../database/querys/timers";
 import { client } from "../..";
 import { checkPermissions } from "../../utils/checkPermissions";
+import loadLanguage from "../../utils/loadLanguage";
+import { getGuildLang } from "../../database/querys/guild";
 
 const hourMultiplier = 1000 * 60 * 60;
 module.exports = {
@@ -40,6 +42,12 @@ module.exports = {
     // const row = new ActionRowBuilder().addComponents(yes_button, no_button);
     // ------------------------------------------------------------------------------
 
+    let lang: string | Error = await getGuildLang(guild.guildId);
+    if (lang instanceof Error) return lang;
+
+    const languagePack = loadLanguage(lang);
+    const lpcode = languagePack.code.timer;
+
     const args = interaction.options.get("time");
     const permissionError = checkPermissions(interaction);
 
@@ -52,15 +60,16 @@ module.exports = {
         if (timer) {
           const reply =
             timer.time / hourMultiplier == 1
-              ? `Current timer is set to ${timer.time / hourMultiplier} hour`
-              : `Current timer is set to ${timer.time / hourMultiplier} hours`;
+              ? // prettier-ignore
+                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}***`
+              : // prettier-ignore
+                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}***`;
           interaction.reply({ content: reply, ephemeral: true });
         }
         // (1) Otherwise, prompt to add a timer
         else
           interaction.reply({
-            content:
-              "No timer set. please add a time amount (in hours) after the `/timer` command",
+            content: lpcode.empty.name,
             ephemeral: true,
           });
       } else {
@@ -80,13 +89,19 @@ module.exports = {
               if (timer) {
                 await stopTimer(timer);
                 await interaction.reply({
-                  content: "Timer stopped",
+               
+                  content: lpcode.stopped,
+               
                   ephemeral: true,
+             ,
                 });
               } else
                 await interaction.reply({
-                  content: "No timer found",
+               
+                  content: lpcode.started,
+               
                   ephemeral: true,
+             ,
                 }); // Guild has no timer
             } catch (error) {
               console.log(error);
@@ -103,13 +118,19 @@ module.exports = {
                 await setTimerStatus(timer, true);
                 await startTimer(timer, client, true);
                 await interaction.reply({
-                  content: "Timer started",
+               
+                  content: lpcode.started,
+               
                   ephemeral: true,
+             ,
                 });
               } else
                 await interaction.reply({
-                  content: "No timer found",
+               
+                  content: lpcode.notFound,
+               
                   ephemeral: true,
+             ,
                 }); // Guild has no timer
             } catch (e) {
               console.log(e);
@@ -139,13 +160,13 @@ module.exports = {
                   // Creation SUCCESSFUL (input time was more than 1 and less than 24)
                   await startTimer(newTimer, client, true);
                   interaction.reply({
-                    content: "timer started",
+                    content: lpcode.started,
                     ephemeral: true,
                   });
                 }
               } catch {
                 interaction.reply({
-                  content: `Value **${args.value}** is not a valid timer argument`,
+                  content: `${lpcode.invalid.name} **"${args.value}"** ${lpcode.invalid.value}`,
                   ephemeral: true,
                 });
               }
@@ -173,8 +194,8 @@ module.exports = {
                   if (timer) {
                     const reply =
                       args.value == "1"
-                        ? `Timer set to ${args.value} hour`
-                        : `Timer set to ${args.value} hours`;
+                        ? ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
+                        : ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
                     interaction.reply({
                       content: reply,
                       ephemeral: true,
@@ -184,7 +205,7 @@ module.exports = {
                 }
               } catch {
                 interaction.reply({
-                  content: `value "${args.value}" is not a valid timer argument`,
+                  content: `${lpcode.invalid.name} **"${args.value}"** ${lpcode.invalid.value}`,
                   ephemeral: true,
                 });
               }
