@@ -6,10 +6,11 @@ import fs from "fs";
 import mongoose from "mongoose";
 import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
+import { startAllTimer } from "./utils/timers";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
-const client = new CustomClient();
+export const client = new CustomClient();
 client.setupInteractionHandler();
 
 const foldersPath = path.join(__dirname, "commands");
@@ -33,7 +34,7 @@ for (const folder of commandFolders) {
   }
 }
 
-client.once(Events.ClientReady, (c) => {
+client.once(Events.ClientReady, async (c) => {
   console.log(`Ready! Logged in as ${c.user.tag}`);
   //Controllo i server che usano il bot
 
