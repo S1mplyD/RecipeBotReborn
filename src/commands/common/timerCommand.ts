@@ -59,15 +59,17 @@ module.exports = {
               : `Current timer is set to ${
                   timer.time / hourMultiplier
                 } hours and it is ${active}`;
-          interaction.reply({ content: reply, ephemeral: true });
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.editReply({ content: reply });
         }
         // (1) Otherwise, prompt to add a timer
-        else
-          interaction.reply({
+        else {
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.editReply({
             content:
               "No timer set. please add a time amount (in hours) after the `/timer` command",
-            ephemeral: true,
           });
+        }
       } else {
         // Command has no arguments
         const timer = await getTimerByGuildId(interaction.guildId!);
@@ -84,15 +86,16 @@ module.exports = {
               // And check if guild has a timer
               if (timer) {
                 await stopTimer(timer);
-                await interaction.reply({
+                await interaction.deferReply({ ephemeral: true });
+                await interaction.editReply({
                   content: "Timer stopped",
-                  ephemeral: true,
                 });
-              } else
-                await interaction.reply({
+              } else {
+                await interaction.deferReply({ ephemeral: true });
+                await interaction.editReply({
                   content: "No timer found",
-                  ephemeral: true,
                 }); // Guild has no timer
+              }
             } catch (error) {
               console.log(error);
               interaction.reply("Something went wrong");
@@ -108,15 +111,16 @@ module.exports = {
                 await stopTimer(timer);
                 await setTimerStatus(timer, true);
                 await startTimer(timer, client, true);
-                await interaction.reply({
+                await interaction.deferReply({ ephemeral: true });
+                await interaction.editReply({
                   content: "Timer started",
-                  ephemeral: true,
                 });
-              } else
-                await interaction.reply({
+              } else {
+                await interaction.deferReply({ ephemeral: true });
+                await interaction.editReply({
                   content: "No timer found",
-                  ephemeral: true,
                 }); // Guild has no timer
+              }
             } catch (e) {
               console.log(e);
               interaction.reply("Something went wrong");
@@ -138,18 +142,20 @@ module.exports = {
                   guild.lang
                 );
 
-                if (typeof newTimer == "string")
-                  // Creation ERROR (input time was less than 1 or more than 24)
-                  interaction.reply({ content: newTimer, ephemeral: true });
+                if (typeof newTimer == "string") {
+                  await interaction.deferReply({ ephemeral: true });
+                  await interaction.editReply({ content: newTimer });
+                }
+                // Creation ERROR (input time was less than 1 or more than 24)
                 else {
                   // Creation SUCCESSFUL (input time was more than 1 and less than 24)
                   await startTimer(newTimer, client, true);
-                  interaction.reply({
+                  await interaction.deferReply({ ephemeral: true });
+                  interaction.editReply({
                     content: "timer started",
-                    ephemeral: true,
                   });
                 }
-              } catch {
+              } catch (e) {
                 interaction.reply({
                   content: `Value **${args.value}** is not a valid timer argument`,
                   ephemeral: true,
@@ -165,10 +171,12 @@ module.exports = {
                   timer,
                   args.value as unknown as number
                 );
-                if (updatedTimer)
+                if (updatedTimer) {
                   // Creation ERROR (input time was less than 1 or more than 24)
-                  interaction.reply({ content: updatedTimer, ephemeral: true });
-                else {
+                  await interaction.deferReply({ ephemeral: true });
+
+                  await interaction.editReply({ content: updatedTimer });
+                } else {
                   // Creation SUCCESSFUL (input time was more than 1 and less than 24)
                   const newTimer: TimerType | null = await getTimerByGuildId(
                     timer.guildId
@@ -182,9 +190,10 @@ module.exports = {
                       args.value == "1"
                         ? `Timer set to ${args.value} hour`
                         : `Timer set to ${args.value} hours`;
-                    interaction.reply({
+                    await interaction.deferReply({ ephemeral: true });
+
+                    await interaction.editReply({
                       content: reply,
-                      ephemeral: true,
                       /*components: [row]*/ //Buttons integration WIP
                     });
                   }

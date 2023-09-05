@@ -60,11 +60,11 @@ module.exports = {
 
       if (AviableLanguages.includes(newLang)) {
         await updateGuildLanguage(interaction.guildId!, newLang);
-        await interaction.reply({
+        await interaction.deferReply({ ephemeral: true });
+        await interaction.editReply({
           content:
             `Language set to ***${newLang}***  ${LanguageToEmote[newLang]}` ||
             "Language set",
-          ephemeral: true,
         });
       } else {
         await interaction.reply({

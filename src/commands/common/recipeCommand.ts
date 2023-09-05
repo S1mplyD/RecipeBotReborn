@@ -58,8 +58,8 @@ module.exports = {
           //   .setEmoji("⭐");
 
           // const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
-
-          const response = await interaction.reply({
+          await interaction.deferReply();
+          const response = await interaction.editReply({
             embeds: [recipeEmbed],
             // components: [row],
           });

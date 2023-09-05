@@ -79,7 +79,7 @@ module.exports = {
         }
       )
       .setFooter({ text: languagePack.code.help.footer });
-
-    await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
+    await interaction.deferReply({ ephemeral: true });
+    await interaction.editReply({ embeds: [helpEmbed] });
   },
 };
