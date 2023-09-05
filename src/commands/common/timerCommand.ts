@@ -50,10 +50,15 @@ module.exports = {
 
         // If the guild already has a timer, reply with its time. (1)
         if (timer) {
+          const active = timer.status ? "active" : "stopped";
           const reply =
             timer.time / hourMultiplier == 1
-              ? `Current timer is set to ${timer.time / hourMultiplier} hour`
-              : `Current timer is set to ${timer.time / hourMultiplier} hours`;
+              ? `Current timer is set to ${
+                  timer.time / hourMultiplier
+                } hour and it is ${active}`
+              : `Current timer is set to ${
+                  timer.time / hourMultiplier
+                } hours and it is ${active}`;
           interaction.reply({ content: reply, ephemeral: true });
         }
         // (1) Otherwise, prompt to add a timer
