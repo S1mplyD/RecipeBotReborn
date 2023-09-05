@@ -38,7 +38,7 @@ module.exports = {
 
     const languagePack = loadLanguage(lang);
     const lpcode = languagePack.code.recipe;
-    
+
     const args = interaction.options.get("name");
     const permissionError = checkPermissions(interaction);
 
@@ -133,6 +133,7 @@ module.exports = {
               text: "Category: " + recipe.category ?? " ",
               iconURL: constants.botImage,
             });
+          await interaction.deferReply({ ephemeral: true });
           await interaction.reply({ embeds: [recipeEmbed] });
         } else await interaction.reply("No matching recipe name found");
       }

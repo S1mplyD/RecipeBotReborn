@@ -54,32 +54,32 @@ module.exports = {
         };
         langSetEmbed.addFields(field);
       });
-
-      await interaction.reply({ embeds: [langSetEmbed], ephemeral: true });
+      await interaction.deferReply({ ephemeral: true });
+      await interaction.editReply({ embeds: [langSetEmbed] });
     } else {
       const newLang = args.value as string;
 
       if (language != newLang) {
         if (AviableLanguages.includes(newLang)) {
           await updateGuildLanguage(interaction.guildId!, newLang);
-          await interaction.reply({
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.editReply({
             content:
               `${lpcode.set} ***${newLang}***  ${LanguageToEmote[newLang]}` ||
               lpcode.setAlt,
-            ephemeral: true,
           });
         } else {
-          await interaction.reply({
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.editReply({
             content: lpcode.error,
-            ephemeral: true,
           });
         }
       } else {
-        await interaction.reply({
+        await interaction.deferReply({ ephemeral: true });
+        await interaction.editReply({
           content:
             `${lpcode.same} ***${newLang}***  ${LanguageToEmote[newLang]}` ||
             lpcode.setAlt,
-          ephemeral: true,
         });
       }
     }
