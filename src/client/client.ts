@@ -13,7 +13,9 @@ export class CustomClient extends Client {
   public commands: Collection<string, any>;
 
   constructor() {
-    super({ intents: [GatewayIntentBits.Guilds] });
+    super({
+      intents: [GatewayIntentBits.Guilds],
+    });
     this.commands = new Collection();
   }
 
@@ -33,7 +35,6 @@ export class CustomClient extends Client {
       const guild = await getGuildByGuildId(interaction.guildId!);
 
       try {
-        //TODO check server permission
         await command.execute(
           interaction as CommandInteraction,
           guild as GuildType

@@ -15,6 +15,7 @@ export type RecipeType = {
   category: string;
   desc: string;
   lang: string;
+  featuredData: string[];
 };
 
 export type TimerType = {
@@ -23,6 +24,11 @@ export type TimerType = {
   time: number;
   status: boolean;
   lang: string;
+};
+
+export type UserType = {
+  userId: string;
+  favoriteRecipes: string[];
 };
 
 export type Interval = {

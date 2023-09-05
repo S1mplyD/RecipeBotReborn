@@ -24,30 +24,18 @@ export default <LanguageTranscription>{
       Name: "Cambia la lingua del bot",
       Value: '`lang "lingua"`',
     },
-    changeRecipeLanguage: {
-      Name: "Cambia la lingua delle ricette",
-      Value: '`rlang "lingua"`',
-    },
-    changePrefix: {
-      Name: "Cambia il prefisso",
-      Value: '`prefix "simbolo"`',
-    },
-    timerAdd: {
+    timer: {
       Name: "Aggiunge un timer per le ricette automatiche",
-      Value: '`time "ore"`',
-    },
-    timerOff: {
-      Name: "Disattiva il timer per le ricette automatiche",
-      Value: "`time off`",
+      Value: '`timer "on/off" "ore" `',
     },
     categoryList: {
       Name: "Mostra le categorie di ricette disponibili",
       Value: "`list`",
     },
-    showFavoriteList: {
-      Name: "Mostra la tua lista dei preferiti",
-      Value: "`favourite`",
-    },
+    // showFavoriteList: {
+    //   Name: "Mostra la tua lista dei preferiti",
+    //   Value: "`favorite`",
+    // },
     support: {
       Name: "Richiedi supporto",
       Value: "`support`",
@@ -68,6 +56,11 @@ export default <LanguageTranscription>{
     footer: "Ricorda che le ricette sono diverse in base alla lingua",
   },
 
+  recipe: {
+    tags: "Tags alimentari",
+    category: "Categoria",
+  },
+
   favorite: {
     title: "Ricette preferite:",
     delete: {
@@ -81,6 +74,10 @@ export default <LanguageTranscription>{
 
   languages: {
     title: "**Lista delle lingue disponibili:**",
+    set: "Nuova lingua impostata:",
+    setAlt: "Nuova lingua impostata",
+    same: "La lingua attuale è già",
+    error: "Errore nell'impostazione della lingua",
   },
 
   recipeLanguages: {
@@ -91,16 +88,27 @@ export default <LanguageTranscription>{
     title: "**Lista delle categorie di ricette:**",
   },
 
-  time: {
+  timer: {
     empty: {
-      name: "Nessun timer impostato",
+      name: "Nessun timer impostato. Aggiungi un tempo (in ore) dopo il comando `/timer`",
     },
     current: {
-      name: "Timer impostato:",
-      value: "ore",
+      name: "Timer attuale:",
+      valueOne: "ora",
+      valueMany: "ore",
     },
     invalid: {
-      name: "Intervallo inserito non valido",
+      name: "Il valore",
+      value: "non è un  argomento valido",
     },
+    stopped: "Timer fermato",
+    started: "Timer avviato",
+    notFound: "Nessun timer trovato",
+  },
+
+  timerError: {
+    less: "Il tempo impostato deve essere di almeno 1 ora",
+    more: "Il tempo impostato non può essere maggiore di 24 ore",
+    failure: "Errore nella creazione del timer",
   },
 };
