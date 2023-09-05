@@ -134,7 +134,7 @@ module.exports = {
               iconURL: constants.botImage,
             });
           await interaction.deferReply({ ephemeral: true });
-          await interaction.reply({ embeds: [recipeEmbed] });
+          await interaction.editReply({ embeds: [recipeEmbed] });
         } else await interaction.reply("No matching recipe name found");
       }
     } else
