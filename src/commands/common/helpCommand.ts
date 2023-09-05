@@ -15,6 +15,7 @@ module.exports = {
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
+    const lpcode = languagePack.code.help;
 
     const helpEmbed = new EmbedBuilder()
       .setAuthor({ name: "RecipeBot", iconURL: constants.botImage })
@@ -22,63 +23,51 @@ module.exports = {
       .setColor(constants.message.color)
       .addFields(
         {
-          name: languagePack.code.help.help.Name,
-          value: languagePack.code.help.help.Value,
+          name: lpcode.help.Name,
+          value: lpcode.help.Value,
         },
         {
-          name: languagePack.code.help.randomRecipe.Name,
-          value: languagePack.code.help.randomRecipe.Value,
+          name: lpcode.randomRecipe.Name,
+          value: lpcode.randomRecipe.Value,
         },
         {
-          name: languagePack.code.help.specificRecipe.Name,
-          value: languagePack.code.help.specificRecipe.Value,
+          name: lpcode.specificRecipe.Name,
+          value: lpcode.specificRecipe.Value,
         },
         {
-          name: languagePack.code.help.listAvaiableLanguages.Name,
-          value: languagePack.code.help.listAvaiableLanguages.Value,
+          name: lpcode.listAvaiableLanguages.Name,
+          value: lpcode.listAvaiableLanguages.Value,
         },
         {
-          name: languagePack.code.help.changeBotLanguage.Name,
-          value: languagePack.code.help.changeBotLanguage.Value,
+          name: lpcode.changeBotLanguage.Name,
+          value: lpcode.changeBotLanguage.Value,
         },
         {
-          name: languagePack.code.help.changeRecipeLanguage.Name,
-          value: languagePack.code.help.changeRecipeLanguage.Value,
+          name: lpcode.timer.Name,
+          value: lpcode.timer.Value,
         },
         {
-          name: languagePack.code.help.changePrefix.Name,
-          value: languagePack.code.help.changePrefix.Value,
+          name: lpcode.categoryList.Name,
+          value: lpcode.categoryList.Value,
+        },
+        // {
+        //   name: lpcode.showFavoriteList.Name,
+        //   value: lpcode.showFavoriteList.Value,
+        // },
+        {
+          name: lpcode.support.Name,
+          value: lpcode.support.Value,
         },
         {
-          name: languagePack.code.help.timerAdd.Name,
-          value: languagePack.code.help.timerAdd.Value,
+          name: lpcode.donate.Name,
+          value: lpcode.donate.Value,
         },
         {
-          name: languagePack.code.help.timerOff.Name,
-          value: languagePack.code.help.timerOff.Value,
-        },
-        {
-          name: languagePack.code.help.categoryList.Name,
-          value: languagePack.code.help.categoryList.Value,
-        },
-        {
-          name: languagePack.code.help.showFavoriteList.Name,
-          value: languagePack.code.help.showFavoriteList.Value,
-        },
-        {
-          name: languagePack.code.help.support.Name,
-          value: languagePack.code.help.support.Value,
-        },
-        {
-          name: languagePack.code.help.donate.Name,
-          value: languagePack.code.help.donate.Value,
-        },
-        {
-          name: languagePack.code.help.telegram.Name,
-          value: languagePack.code.help.telegram.Value,
+          name: lpcode.telegram.Name,
+          value: lpcode.telegram.Value,
         }
       )
-      .setFooter({ text: languagePack.code.help.footer });
+      .setFooter({ text: lpcode.footer });
 
     await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
   },
