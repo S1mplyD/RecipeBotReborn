@@ -22,19 +22,7 @@ export interface LanguageTranscription {
       Name: string;
       Value: string;
     };
-    changeRecipeLanguage: {
-      Name: string;
-      Value: string;
-    };
-    changePrefix: {
-      Name: string;
-      Value: string;
-    };
-    timerAdd: {
-      Name: string;
-      Value: string;
-    };
-    timerOff: {
+    timer: {
       Name: string;
       Value: string;
     };
@@ -42,10 +30,10 @@ export interface LanguageTranscription {
       Name: string;
       Value: string;
     };
-    showFavoriteList: {
-      Name: string;
-      Value: string;
-    };
+    // showFavoriteList: {
+    //   Name: string;
+    //   Value: string;
+    // };
     support: {
       Name: string;
       Value: string;
@@ -66,6 +54,11 @@ export interface LanguageTranscription {
     footer: string;
   };
 
+  recipe: {
+    tags: string;
+    category: string;
+  };
+
   favorite: {
     title: string;
     delete: {
@@ -80,17 +73,17 @@ export interface LanguageTranscription {
 
   languages: {
     title: string;
-  };
-
-  recipeLanguages: {
-    title: string;
+    set: string;
+    setAlt: string;
+    same: string;
+    error: string;
   };
 
   categoryList: {
     title: string;
   };
 
-  time: {
+  timer: {
     title?: string;
     empty: {
       name: string;
@@ -98,11 +91,21 @@ export interface LanguageTranscription {
     };
     current: {
       name: string;
-      value?: string;
+      valueOne?: string;
+      valueMany?: string;
     };
     invalid: {
       name: string;
       value?: string;
     };
+    stopped: string;
+    started: string;
+    notFound: string;
+  };
+
+  timerError: {
+    less: string;
+    more: string;
+    failure: string;
   };
 }
