@@ -44,6 +44,7 @@ client.once(Events.ClientReady, (c) => {
       await createGuild(guild.id, guild.name, guild.memberCount);
     }
   });
+  await startAllTimer(client);
 });
 
 client.on("guildCreate", async (guild) => {
