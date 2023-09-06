@@ -118,9 +118,6 @@ module.exports = {
         console.log("Recipe Name:", recipeName);
         const recipe = await getRecipeName(recipeName, guild.lang);
         if (recipe) {
-          if (recipe?.featuredData.length > 0) console.log(" balls");
-        }
-        if (recipe) {
           console.log("db name:", recipe.name);
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
@@ -133,7 +130,7 @@ module.exports = {
               text: "Category: " + recipe.category ?? " ",
               iconURL: constants.botImage,
             });
-          await interaction.deferReply({ ephemeral: true });
+          await interaction.deferReply();
           await interaction.editReply({ embeds: [recipeEmbed] });
         } else await interaction.reply("No matching recipe name found");
       }
