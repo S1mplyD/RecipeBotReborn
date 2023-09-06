@@ -2,7 +2,7 @@
   "name": "recipebot2.0",
   "version": "1.0.0",
   "description": "Version 2.0 of RecipeBot",
-  "main": "dist/index.js",
+  "main": "index.js",
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",

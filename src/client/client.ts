@@ -35,7 +35,6 @@ export class CustomClient extends Client {
       const guild = await getGuildByGuildId(interaction.guildId!);
 
       try {
-        //TODO check server permission
         await command.execute(
           interaction as CommandInteraction,
           guild as GuildType

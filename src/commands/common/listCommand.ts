@@ -29,7 +29,8 @@ module.exports = {
         .setTitle(languagePack.code.categoryList.title)
         .setColor(constants.message.color)
         .setDescription(str);
-      await interaction.reply({ embeds: [list] });
+      await interaction.deferReply();
+      await interaction.editReply({ embeds: [list] });
     } else
       await interaction.reply({ content: permissionError, ephemeral: true });
   },

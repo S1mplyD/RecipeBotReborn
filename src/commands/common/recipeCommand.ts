@@ -38,7 +38,7 @@ module.exports = {
 
     const languagePack = loadLanguage(lang);
     const lpcode = languagePack.code.recipe;
-    
+
     const args = interaction.options.get("name");
     const permissionError = checkPermissions(interaction);
 
@@ -49,7 +49,11 @@ module.exports = {
         else {
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
-            .setImage(recipe.img)
+            .setImage(
+              recipe.img != ""
+                ? recipe.img
+                : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
+            )
             .setColor(constants.message.color)
             .setDescription(recipe.desc);
 
@@ -85,8 +89,8 @@ module.exports = {
           //   .setEmoji("⭐");
 
           // const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
-
-          const response = await interaction.reply({
+          await interaction.deferReply();
+          const response = await interaction.editReply({
             embeds: [recipeEmbed],
             // components: [row],
           });
@@ -117,14 +121,17 @@ module.exports = {
         let recipeName = args?.value as string;
         console.log("Recipe Name:", recipeName);
         const recipe = await getRecipeName(recipeName, guild.lang);
-        if (recipe) {
-          if (recipe?.featuredData.length > 0) console.log(" balls");
-        }
+        console.log(recipe);
+
         if (recipe) {
           console.log("db name:", recipe.name);
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
-            .setImage(recipe.img)
+            .setImage(
+              recipe.img != ""
+                ? recipe.img
+                : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
+            )
             .setColor(constants.message.color)
             .setDescription(recipe.desc)
             .setURL(recipe.url)
@@ -133,7 +140,8 @@ module.exports = {
               text: "Category: " + recipe.category ?? " ",
               iconURL: constants.botImage,
             });
-          await interaction.reply({ embeds: [recipeEmbed] });
+          await interaction.deferReply();
+          await interaction.editReply({ embeds: [recipeEmbed] });
         } else await interaction.reply("No matching recipe name found");
       }
     } else

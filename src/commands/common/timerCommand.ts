@@ -64,14 +64,14 @@ module.exports = {
                 ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}***`
               : // prettier-ignore
                 ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}***`;
-          interaction.reply({ content: reply, ephemeral: true });
+          await interaction.deferReply({ ephemeral: true });
+          await interaction.editReply({ content: reply });
         }
         // (1) Otherwise, prompt to add a timer
-        else
-          interaction.reply({
-            content: lpcode.empty.name,
-            ephemeral: true,
-          });
+        else await interaction.deferReply({ ephemeral: true });
+        await interaction.editReply({
+          content: lpcode.empty.name,
+        });
       } else {
         // Command has no arguments
         const timer = await getTimerByGuildId(interaction.guildId!);
@@ -84,28 +84,18 @@ module.exports = {
             // ###   SET TIMER OFF    ###
             // ##########################
 
-            try {
-              // And check if guild has a timer
-              if (timer) {
-                await stopTimer(timer);
-                await interaction.reply({
-               
-                  content: lpcode.stopped,
-               
-                  ephemeral: true,
-             ,
-                });
-              } else
-                await interaction.reply({
-               
-                  content: lpcode.started,
-               
-                  ephemeral: true,
-             ,
-                }); // Guild has no timer
-            } catch (error) {
-              console.log(error);
-              interaction.reply("Something went wrong");
+            // And check if guild has a timer
+            if (timer) {
+              await stopTimer(timer);
+              await interaction.deferReply({ ephemeral: true });
+              interaction.editReply({
+                content: lpcode.stopped,
+              });
+            } else {
+              await interaction.deferReply({ ephemeral: true });
+              await interaction.editReply({
+                content: lpcode.started,
+              }); // Guild has no timer
             }
           } else if (lowerCaseArgs === "on") {
             // ##########################
@@ -113,31 +103,20 @@ module.exports = {
             // ##########################
 
             // And check if guild has a timer
-            try {
-              if (timer) {
-                await setTimerStatus(timer, true);
-                await startTimer(timer, client, true);
-                await interaction.reply({
-               
-                  content: lpcode.started,
-               
-                  ephemeral: true,
-             ,
-                });
-              } else
-                await interaction.reply({
-               
-                  content: lpcode.notFound,
-               
-                  ephemeral: true,
-             ,
-                }); // Guild has no timer
-            } catch (e) {
-              console.log(e);
-              interaction.reply("Something went wrong");
+            if (timer) {
+              await setTimerStatus(timer, true);
+              await startTimer(timer, client, true);
+              await interaction.deferReply({ ephemeral: true });
+              await interaction.editReply({
+                content: lpcode.started,
+              });
+            } else {
+              await interaction.deferReply({ ephemeral: true });
+              await interaction.editReply({
+                content: lpcode.notFound,
+              }); // Guild has no timer
             }
           }
-
           // All other cases where timer is neither "off" nor "on" -> "args" is a number
           else {
             if (!timer) {
@@ -153,15 +132,16 @@ module.exports = {
                   guild.lang
                 );
 
-                if (typeof newTimer == "string")
+                if (typeof newTimer == "string") {
                   // Creation ERROR (input time was less than 1 or more than 24)
-                  interaction.reply({ content: newTimer, ephemeral: true });
-                else {
+                  await interaction.deferReply({ ephemeral: true });
+                  await interaction.reply({ content: newTimer });
+                } else {
                   // Creation SUCCESSFUL (input time was more than 1 and less than 24)
                   await startTimer(newTimer, client, true);
-                  interaction.reply({
+                  await interaction.deferReply({ ephemeral: true });
+                  await interaction.editReply({
                     content: lpcode.started,
-                    ephemeral: true,
                   });
                 }
               } catch {
@@ -180,10 +160,13 @@ module.exports = {
                   timer,
                   args.value as unknown as number
                 );
-                if (updatedTimer)
+                if (updatedTimer) {
                   // Creation ERROR (input time was less than 1 or more than 24)
-                  interaction.reply({ content: updatedTimer, ephemeral: true });
-                else {
+                  await interaction.deferReply({ ephemeral: true });
+                  await interaction.editReply({
+                    content: updatedTimer,
+                  });
+                } else {
                   // Creation SUCCESSFUL (input time was more than 1 and less than 24)
                   const newTimer: TimerType | null = await getTimerByGuildId(
                     timer.guildId
@@ -196,9 +179,9 @@ module.exports = {
                       args.value == "1"
                         ? ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
                         : ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
-                    interaction.reply({
+                    await interaction.deferReply({ ephemeral: true });
+                    await interaction.editReply({
                       content: reply,
-                      ephemeral: true,
                       /*components: [row]*/ //Buttons integration WIP
                     });
                   }

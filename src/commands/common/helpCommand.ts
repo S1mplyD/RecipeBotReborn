@@ -67,8 +67,8 @@ module.exports = {
           value: lpcode.telegram.Value,
         }
       )
-      .setFooter({ text: lpcode.footer });
-
-    await interaction.reply({ embeds: [helpEmbed], ephemeral: true });
+      .setFooter({ text: languagePack.code.help.footer });
+    await interaction.deferReply({ ephemeral: true });
+    await interaction.editReply({ embeds: [helpEmbed] });
   },
 };
