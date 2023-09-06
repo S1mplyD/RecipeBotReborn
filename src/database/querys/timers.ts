@@ -85,3 +85,12 @@ export async function updateTimer(
     return null;
   }
 }
+
+export async function changeTimerLang(lang: string, guildId: string) {
+  const update = await timerModel.updateOne(
+    { guildId: guildId },
+    { lang: lang }
+  );
+  if (update.modifiedCount < 1) console.log("cannot update");
+  else return null;
+}
