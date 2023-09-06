@@ -4,7 +4,10 @@ import { RecipeType } from "../../utils/types";
 export async function getCategories(lang: string) {
   const categories: string[] = await recipeModel
     .find({ lang: lang })
+    .where("category")
+    .ne("")
     .distinct("category");
+
   return categories;
 }
 
@@ -22,8 +25,10 @@ export async function getRecipeName(name: string, lang: string) {
     ],
     lang: lang,
   });
+  console.log(recipes.length);
+
   if (recipes.length < 1) return null;
-  else return recipes[Math.floor(Math.random() * (recipes.length - 0 + 1)) + 0];
+  else return recipes[Math.floor(Math.random() * recipes.length)];
 }
 
 export async function getRandomRecipe(lang: string) {
