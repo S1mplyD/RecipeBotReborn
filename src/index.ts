@@ -14,13 +14,15 @@ export const client = new CustomClient();
 client.setupInteractionHandler();
 
 const foldersPath = path.join(__dirname, "commands");
+
 const commandFolders = fs.readdirSync(foldersPath);
 
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
-  const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".ts" || ".js"));
+  const commandFiles = fs.readdirSync(commandsPath).filter((file) => {
+    if (file.endsWith(".js") || file.endsWith(".ts")) return file;
+  });
+
   for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
