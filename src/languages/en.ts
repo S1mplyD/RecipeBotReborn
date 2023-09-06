@@ -26,7 +26,7 @@ export default <LanguageTranscription>{
     },
     timer: {
       Name: "Set an auto-recipe timer",
-      Value: '`time "hours"`',
+      Value: '`timer "on/off" "hours" `',
     },
     categoryList: {
       Name: "Shows the recipe categories list",
