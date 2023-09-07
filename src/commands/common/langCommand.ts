@@ -13,6 +13,7 @@ import loadLanguage from "../../utils/loadLanguage";
 import { updateGuildLanguage } from "../../database/querys/guild";
 import langs from "../../languages/index";
 import { getGuildLang } from "../../database/querys/guild";
+import { changeTimerLang } from "../../database/querys/timers";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -62,6 +63,7 @@ module.exports = {
       if (language != newLang) {
         if (AviableLanguages.includes(newLang)) {
           await updateGuildLanguage(interaction.guildId!, newLang);
+          await changeTimerLang(newLang, interaction.guildId!);
           await interaction.deferReply({ ephemeral: true });
           await interaction.editReply({
             content:
