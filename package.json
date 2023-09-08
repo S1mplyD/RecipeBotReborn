@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon src/index.ts",
     "build": "tsc",
-    "deployrun": "tsc && node dist/deployCommands.js && nodemon src/index.ts",
+    "start": "tsc && node dist/deployCommands.js && nodemon src/index.ts",
     "deploy": "node dist/deployCommands.js"
   },
   "repository": {
