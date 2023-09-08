@@ -19,16 +19,31 @@ export async function getCategories(lang: string) {
 export async function getRecipeName(name: string, lang: string) {
   const recipes: RecipeType[] | null = await recipeModel.find({
     $or: [
+      { category: { $regex: name, $options: "i" } },
       { name: { $regex: name, $options: "i" } },
       { desc: { $regex: name, $options: "i" } },
-      { category: { $regex: name, $options: "i" } },
     ],
     lang: lang,
   });
-  console.log(recipes.length);
+  let priorityRecipes: RecipeType[] = [];
+  // const recipe = recipes[Math.floor(Math.random() * recipes.length)];
+  for (let i of recipes) {
+    if (i.category.includes(name)) {
+      for (let j = 0; j < 3; j++) {
+        priorityRecipes.push(i);
+      }
+    } else if (i.name.includes(name)) {
+      for (let j = 0; j < 2; j++) {
+        priorityRecipes.push(i);
+      }
+    } else priorityRecipes.push(i);
+  }
+  console.log(priorityRecipes);
 
   if (recipes.length < 1) return null;
-  else return recipes[Math.floor(Math.random() * recipes.length)];
+  else {
+    return priorityRecipes[Math.floor(Math.random() * priorityRecipes.length)];
+  }
 }
 
 export async function getRandomRecipe(lang: string) {
