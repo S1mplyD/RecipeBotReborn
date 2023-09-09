@@ -45,20 +45,13 @@ export async function startTimer(
       await addStartTime(timer, new Date());
       newTimer = await getTimerByGuildId(timer.guildId);
     }
-
     const now = new Date();
-    console.log(timer.startedAt.getTime());
-    console.log(now.getTime());
-
     let timeLeft = newTimer
       ? newTimer!.time - (now.getTime() - newTimer!.startedAt.getTime())
       : timer.time - (now.getTime() - timer.startedAt.getTime());
-    //3600000 -
-    console.log(timeLeft);
     if (timeLeft < 0) {
       if (channel && channel.isTextBased()) {
         const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
-        console.log(recipe);
 
         if (!recipe) channel.send("not found");
         else {
@@ -98,7 +91,6 @@ export async function startTimer(
       interval = setInterval(async () => {
         if (channel && channel.isTextBased()) {
           const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
-          console.log(recipe);
 
           if (!recipe) channel.send("not found");
           else {
