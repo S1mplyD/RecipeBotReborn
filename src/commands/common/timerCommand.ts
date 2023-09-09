@@ -183,7 +183,8 @@ module.exports = {
                   );
 
                   // Start the updated timer
-                  await stopTimer(newTimer!);
+                  await stopTimer(timer);
+                  await setTimerStatus(newTimer!, true);
                   await startTimer(newTimer!, client, true);
                   if (timer) {
                     const reply =

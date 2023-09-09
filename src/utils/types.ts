@@ -24,6 +24,7 @@ export type TimerType = {
   time: number;
   status: boolean;
   lang: string;
+  startedAt: Date;
 };
 
 export type UserType = {

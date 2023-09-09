@@ -30,6 +30,7 @@ export async function createTimer(
       lang: lang,
       time: time * hourMultiplier,
       status: true,
+      startedAt: new Date(),
     });
     if (newTimer) {
       return newTimer;
@@ -90,6 +91,26 @@ export async function changeTimerLang(lang: string, guildId: string) {
   const update = await timerModel.updateOne(
     { guildId: guildId },
     { lang: lang }
+  );
+  if (update.modifiedCount < 1) console.log("cannot update");
+  else return null;
+}
+
+export async function addStartTime(timer: TimerType, date: Date) {
+  const newDate = new Date(date.getTime() - (timer.time - 600000));
+
+  const update = await timerModel.updateOne(
+    { channelId: timer.channelId },
+    { startedAt: newDate }
+  );
+  if (update.modifiedCount < 1) console.log("cannot update");
+  else return null;
+}
+
+export async function updateStartTimer(timer: TimerType) {
+  const update = await timerModel.updateOne(
+    { guildId: timer.guildId },
+    { startedAt: new Date() }
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else return null;
