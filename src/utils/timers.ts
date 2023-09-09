@@ -1,11 +1,18 @@
 import { EmbedBuilder } from "discord.js";
 import { CustomClient } from "../client/client";
-import { getAllTimers, setTimerStatus } from "../database/querys/timers";
+import {
+  addStartTime,
+  getAllTimers,
+  getTimerByGuildId,
+  setTimerStatus,
+  updateStartTimer,
+} from "../database/querys/timers";
 import { Interval, RecipeType, TimerType } from "./types";
 import constants from "./constants";
 const hourMultiplier = 1000 * 60 * 60;
 import { getRandomRecipe } from "../database/querys/recipe";
 import { updateTimer } from "../database/querys/timers";
+import { time } from "console";
 
 var intervals: Array<Interval> = [];
 
@@ -33,9 +40,26 @@ export async function startTimer(
 
   const channel = await client.channels.fetch(timer.channelId);
   if (status === true) {
-    interval = setInterval(async () => {
+    let newTimer: TimerType | null = null;
+    if (timer.startedAt === undefined) {
+      await addStartTime(timer, new Date());
+      newTimer = await getTimerByGuildId(timer.guildId);
+    }
+
+    const now = new Date();
+    console.log(timer.startedAt.getTime());
+    console.log(now.getTime());
+
+    let timeLeft = newTimer
+      ? newTimer!.time - (now.getTime() - newTimer!.startedAt.getTime())
+      : timer.time - (now.getTime() - timer.startedAt.getTime());
+    //3600000 -
+    console.log(timeLeft);
+    if (timeLeft < 0) {
       if (channel && channel.isTextBased()) {
         const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
+        console.log(recipe);
+
         if (!recipe) channel.send("not found");
         else {
           const recipeEmbed = new EmbedBuilder()
@@ -60,12 +84,59 @@ export async function startTimer(
 
             recipeEmbed.addFields(field);
           } catch {}
-
+          await updateStartTimer(timer);
           await channel.send({ embeds: [recipeEmbed] });
+          await stopTimer(timer);
+          const newTimer: TimerType | null = await getTimerByGuildId(
+            timer.guildId
+          );
+          await setTimerStatus(newTimer!, true);
+          await startTimer(newTimer!, client, true);
         }
       }
-    }, timer.time as number);
-    await setTimerInterval(interval, timer.channelId, timer.guildId);
+    } else {
+      interval = setInterval(async () => {
+        if (channel && channel.isTextBased()) {
+          const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
+          console.log(recipe);
+
+          if (!recipe) channel.send("not found");
+          else {
+            const recipeEmbed = new EmbedBuilder()
+              .setTitle(recipe.name)
+              .setImage(recipe.img)
+              .setColor(constants.message.color)
+              .setDescription(recipe.desc);
+            try {
+              let featuredDataString = "";
+              recipe.featuredData.forEach((data, index) => {
+                if (index !== 0) {
+                  featuredDataString += " | ";
+                }
+                featuredDataString += data;
+              });
+
+              const field = {
+                name: "Tags:",
+                value: featuredDataString,
+                inline: true,
+              };
+
+              recipeEmbed.addFields(field);
+            } catch {}
+            await updateStartTimer(timer);
+            await channel.send({ embeds: [recipeEmbed] });
+            await stopTimer(timer);
+            const newTimer: TimerType | null = await getTimerByGuildId(
+              timer.guildId
+            );
+            await setTimerStatus(newTimer!, true);
+            await startTimer(newTimer!, client, true);
+          }
+        }
+      }, timeLeft as number);
+      await setTimerInterval(interval, timer.channelId, timer.guildId);
+    }
   }
 }
 
