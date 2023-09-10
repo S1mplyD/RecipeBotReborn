@@ -8,6 +8,7 @@ import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
 import guildModel from "./database/schema/guild.model";
 import { startAllTimer } from "./utils/timers";
+import { AutoPoster } from "topgg-autoposter";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
@@ -38,6 +39,17 @@ for (const folder of commandFolders) {
 }
 
 client.once(Events.ClientReady, async (c) => {
+  const topGGToken = process.env.TOPGG_TOKEN || "";
+  const poster = AutoPoster(topGGToken, client);
+
+  poster.on("posted", (stats) => {
+    console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`);
+  });
+
+  poster.on("error", (err) => {
+    console.error("Error posting stats to Top.gg:", err);
+  });
+
   console.log(`Ready! Logged in as ${c.user.tag}`);
   //Controllo i server che usano il bot
 
