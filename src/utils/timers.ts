@@ -63,7 +63,8 @@ export async function startTimer(
                 : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
             )
             .setColor(constants.message.color)
-            .setDescription(recipe.desc);
+            .setDescription(recipe.desc)
+            .setURL(recipe.url);
           try {
             let featuredDataString = "";
             recipe.featuredData.forEach((data, index) => {
@@ -106,7 +107,8 @@ export async function startTimer(
                   : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
               )
               .setColor(constants.message.color)
-              .setDescription(recipe.desc);
+              .setDescription(recipe.desc)
+              .setURL(recipe.url);
             try {
               let featuredDataString = "";
               recipe.featuredData.forEach((data, index) => {
