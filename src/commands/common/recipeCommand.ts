@@ -15,7 +15,6 @@ import {
   createUser,
   getUser,
 } from "../../database/querys/user";
-import { getUnpackedSettings } from "http2";
 import { checkPermissions } from "../../utils/checkPermissions";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
@@ -82,40 +81,42 @@ module.exports = {
               iconURL: constants.botImage,
             });
 
-          // const button = new ButtonBuilder()
-          //   .setCustomId("add")
-          //   .setLabel("Add")
-          //   .setStyle(ButtonStyle.Primary)
-          //   .setEmoji("⭐");
+          const button = new ButtonBuilder()
+            .setCustomId("add")
+            .setLabel("Add")
+            .setStyle(ButtonStyle.Primary)
+            .setEmoji("⭐");
 
-          // const row = new ActionRowBuilder<ButtonBuilder>().addComponents(button);
+          const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            button
+          );
           await interaction.deferReply();
           const response = await interaction.editReply({
             embeds: [recipeEmbed],
-            // components: [row],
+            components: [row],
           });
-          // const collectorFilter = (i) => i.user.id === interaction.user.id;
-          // try {
-          //   const confirmation = await response.awaitMessageComponent({
-          //     filter: collectorFilter,
-          //     time: 60000,
-          //   });
-          //   const user: UserType | Error = await getUser(interaction.user.id);
-          //   if (user instanceof Error) await createUser(interaction.user.id);
-          //   if (confirmation.customId === "add") {
-          //     await addRecipeToUserFavourite(interaction.user.id, recipe.url);
-          //     confirmation.update({
-          //       content: `Recipe ${recipe.name} added to favorites`,
-          //     });
-          //   } else {
-          //     interaction.reply("error occurred");
-          //   }
-          // } catch (e) {
-          //   await interaction.reply({
-          //     content: "Confirmation not received within 1 minute, cancelling",
-          //     components: [],
-          //   });
-          // }
+          const collectorFilter = (i) => i.user.id === interaction.user.id;
+          try {
+            const confirmation = await response.awaitMessageComponent({
+              filter: collectorFilter,
+              time: 60000,
+            });
+            const user: UserType | Error = await getUser(interaction.user.id);
+            if (user instanceof Error) await createUser(interaction.user.id);
+            if (confirmation.customId === "add") {
+              await addRecipeToUserFavourite(interaction.user.id, recipe.url);
+              confirmation.update({
+                content: `Recipe ${recipe.name} added to favorites`,
+              });
+            } else {
+              interaction.reply("error occurred");
+            }
+          } catch (e) {
+            await interaction.reply({
+              content: "Confirmation not received within 1 minute, cancelling",
+              components: [],
+            });
+          }
         }
       } else {
         let recipeName = args?.value as string;
