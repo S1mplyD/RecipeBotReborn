@@ -15,6 +15,7 @@ import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
 
 const hourMultiplier = 1000 * 60 * 60;
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setDMPermission(false) // Command will not work in dm
@@ -27,7 +28,13 @@ module.exports = {
         .setDescription("Time (in hours), on or off")
         .setRequired(false);
       return option;
-    }),
+    })
+    .addRoleOption((role) =>
+      role
+        .setName("role")
+        .setDescription("Select a role to tag")
+        .setRequired(false)
+    ),
   async execute(interaction: CommandInteraction, guild: GuildType) {
     //Buttons integration WIP
     // ------------------------------------------------------------------------------
@@ -49,10 +56,32 @@ module.exports = {
     const lpcode = languagePack.code.timer;
 
     const args = interaction.options.get("time");
+    const role = interaction.options.get("role");
     const permissionError = checkPermissions(interaction);
 
     if (!permissionError) {
       // Check if command has arguments
+      const argsState = args !== null ? 1 : 0; // argsState is set to 1 if is not null (/timer time), 0 if it is null (/timer)
+      const roleState = role !== null ? 1 : 0; // roleState is set to 1 if is not null (/timer role), 0 if it is null (/timer)
+      const state = argsState * 1 + roleState * 2; // operate the two states
+
+      switch (state) {
+        case 0: // no time and no role
+          console.log("no time and no role");
+          break;
+        case 1: // time and no role
+          console.log("time and no role");
+          break;
+        case 2: // role and no time
+          console.log("role and no time");
+          break;
+        case 3: // time and role
+          console.log("time and role");
+          break;
+        default:
+          break;
+      } //WIP: For now this switch only returns the command arguments states
+
       if (!args) {
         const timer = await getTimerByGuildId(interaction.guildId!);
 
