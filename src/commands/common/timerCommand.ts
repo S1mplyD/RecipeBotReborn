@@ -4,6 +4,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, TimerType } from "../../utils/types";
 import { startTimer, stopTimer } from "../../utils/timers";
 import {
+  changeTimerRole,
   createTimer,
   getTimerByGuildId,
   setTimerStatus,
@@ -32,90 +33,72 @@ module.exports = {
     .addRoleOption((role) =>
       role
         .setName("role")
-        .setDescription("Select a role to tag")
+        .setDescription("Select a role to tag. Leave empty to clear role tag")
         .setRequired(false)
     ),
   async execute(interaction: CommandInteraction, guild: GuildType) {
-    //Buttons integration WIP
-    // ------------------------------------------------------------------------------
-    // const yes_button = new ButtonBuilder()
-    //   .setCustomId("yes")
-    //   .setLabel("Yes")
-    //   .setStyle(ButtonStyle.Primary);
-    // const no_button = new ButtonBuilder()
-    //   .setCustomId("no")
-    //   .setLabel("No")
-    //   .setStyle(ButtonStyle.Secondary);
-    // const row = new ActionRowBuilder().addComponents(yes_button, no_button);
-    // ------------------------------------------------------------------------------
-
     let lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
     const lpcode = languagePack.code.timer;
 
-    const args = interaction.options.get("time");
-    const role = interaction.options.get("role");
+    const timeArg = interaction.options.get("time");
+    const roleArg = interaction.options.get("role");
+    const roleId = roleArg?.role?.id;
+    // console.log("roleArg: ", roleId, " ", typeof roleId);
+    // console.log("timeArg: ", timeArg?.value, " ", typeof timeArg?.value);
     const permissionError = checkPermissions(interaction);
 
     if (!permissionError) {
-      // Check if command has arguments
-      const argsState = args !== null ? 1 : 0; // argsState is set to 1 if is not null (/timer time), 0 if it is null (/timer)
-      const roleState = role !== null ? 1 : 0; // roleState is set to 1 if is not null (/timer role), 0 if it is null (/timer)
-      const state = argsState * 1 + roleState * 2; // operate the two states
-
-      switch (state) {
-        case 0: // no time and no role
-          console.log("no time and no role");
-          break;
-        case 1: // time and no role
-          console.log("time and no role");
-          break;
-        case 2: // role and no time
-          console.log("role and no time");
-          break;
-        case 3: // time and role
-          console.log("time and role");
-          break;
-        default:
-          break;
-      } //WIP: For now this switch only returns the command arguments states
-
-      if (!args) {
+      // Check if command has no time specified (/timer ...)
+      if (!timeArg) {
         const timer = await getTimerByGuildId(interaction.guildId!);
 
-        // If the guild already has a timer, reply with its time. (1)
+        // If the guild already has a timer, reply with its time
         if (timer) {
-          let timer_status = "off";
-          timer.status == false
-            ? (timer_status = "off")
-            : (timer_status = "on");
+          let reply = "";
 
-          const reply =
-            timer.time / hourMultiplier == 1
-              ? // prettier-ignore
-                // Eg. "Current timer is set to 1 hour and is currently off"
-                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** and is currently ***${timer_status}***`
-              : // prettier-ignore
-                // Eg. "Current timer is set to 4 hours and is currently off"
-                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** and is currently ***${timer_status}***`;
+          // If a role was specifed (/timer @everyone) updates the timer role
+          if (roleArg) {
+            changeTimerRole(roleId as string, timer.guildId);
+            reply = `${lpcode.current.role} <@&${timer.role}>`;
+          } else {
+            // No time or role argument was specified, return the current timer info
+            let timer_status = "off";
+            timer.status == false
+              ? (timer_status = "off")
+              : (timer_status = "on");
+
+            reply =
+              timer.time / hourMultiplier == 1
+                ? // prettier-ignore
+                  // Eg. "Current timer is set to 1 hour and is currently off"
+                  ` ${lpcode.current.name}\n${lpcode.current.interval} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** | ${lpcode.current.status} ***${timer_status}***` + 
+                      ((timer.role == undefined || timer.role == "" ) ? "" : ` | ${lpcode.current.role} <@&${timer.role}>`)
+                : // prettier-ignore
+                  // Eg. "Current timer is set to 4 hours and is currently off"
+                  ` ${lpcode.current.name}\n${lpcode.current.interval} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** | ${lpcode.current.status} ***${timer_status}***` + 
+                      ((timer.role == undefined || timer.role == "" ) ? "" : ` | ${lpcode.current.role} <@&${timer.role}>`);
+          }
           await interaction.deferReply({ ephemeral: true });
           await interaction.editReply({ content: reply });
         }
-        // (1) Otherwise, prompt to add a timer
         else {
+          // The guild has not a timer already set in db, prompt user to add a timer'
+
           await interaction.deferReply({ ephemeral: true });
           await interaction.editReply({
             content: lpcode.empty.name, // Eg. "No timer set. please add a time amount (in hours) after the `/timer` command"
           });
         }
       } else {
-        // Command has no arguments
+        // Command has time argument (and/or may have role argument too)
         const timer = await getTimerByGuildId(interaction.guildId!);
 
-        if (typeof args.value === "string") {
-          const lowerCaseArgs = args.value.toLowerCase();
+        // If the time argument is a string, check if the string value is "on" or "off" (cases like "hello" will be managed lastly).
+        if (typeof timeArg.value === "string") {
+          const lowerCaseArgs = timeArg.value.toLowerCase();
 
           if (lowerCaseArgs === "off") {
             // ##########################
@@ -155,7 +138,7 @@ module.exports = {
               }); // Guild has no timer
             }
           }
-          // All other cases where timer is neither "off" nor "on" -> "args" is a number
+          // Timer is neither "off" nor "on" -> "timeArg" is a number (or an invalid string, which will be catched and ruturn "invalid argument")
           else {
             if (!timer) {
               // ##########################
@@ -166,8 +149,9 @@ module.exports = {
                 const newTimer = await createTimer(
                   interaction.guildId!,
                   interaction.channelId,
-                  args.value as unknown as number,
-                  guild.lang
+                  timeArg.value as unknown as number,
+                  guild.lang,
+                  roleId as unknown as string
                 );
 
                 if (typeof newTimer == "string") {
@@ -184,7 +168,7 @@ module.exports = {
                 }
               } catch {
                 interaction.reply({
-                  content: `${lpcode.invalid.name} **"${args.value}"** ${lpcode.invalid.value}`, // Eg. "Value "A" is not a valid timer argument"
+                  content: `${lpcode.invalid.name} **"${timeArg.value}"** ${lpcode.invalid.value}`, // Eg. "Value "A" is not a valid timer argument"
                   ephemeral: true,
                 });
               }
@@ -196,7 +180,7 @@ module.exports = {
               try {
                 const updatedTimer = await updateTimer(
                   timer,
-                  args.value as unknown as number
+                  timeArg.value as unknown as number
                 );
                 if (updatedTimer) {
                   // Creation ERROR (input time was less than 1 or more than 24)
@@ -210,28 +194,35 @@ module.exports = {
                     timer.guildId
                   );
 
+                  // Update role if there is one, remove role if just time is specified
+                  if (roleArg) changeTimerRole(roleId as string, timer.guildId);
+                  else changeTimerRole("", timer.guildId);
+
                   // Start the updated timer
                   await stopTimer(timer);
                   await setTimerStatus(newTimer!, true);
                   await startTimer(newTimer!, client, true);
                   if (timer) {
                     const reply =
-                      args.value == "1"
-                        ? // Eg. "Current timer is set to 1 hour"
-                          ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
-                        : // Eg. "Current timer is set to 4 hours"
-                          ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
+                      timeArg.value == "1"
+                        ? // prettier-ignore
+                          // Eg. "Current timer is set to 1 hour and is currently off"
+                          ` ${lpcode.current.set} ${lpcode.current.interval} ***${timeArg.value}  ${lpcode.current.valueOne}***` + 
+                      (roleArg == undefined ? "" : ` | ${lpcode.current.role} <@&${roleId}>`)
+                        : // prettier-ignore
+                          // Eg. "Current timer is set to 4 hours and is currently off"
+                          ` ${lpcode.current.set} ${lpcode.current.interval} ***${timeArg.value}  ${lpcode.current.valueMany}***` + 
+                      (roleArg == undefined ? "" : ` | ${lpcode.current.role} <@&${roleId}>`);
                     await interaction.deferReply({ ephemeral: true });
                     await interaction.editReply({
                       content: reply,
-                      /*components: [row]*/ //Buttons integration WIP
                     });
                   }
                 }
               } catch {
                 interaction.reply({
                   // Eg. "Value "A" is not a valid timer argument"
-                  content: `${lpcode.invalid.name} **"${args.value}"** ${lpcode.invalid.value}`,
+                  content: `${lpcode.invalid.name} **"${timeArg.value}"** ${lpcode.invalid.value}`,
                   ephemeral: true,
                 });
               }
