@@ -14,7 +14,8 @@ export async function createTimer(
   guildId: string,
   channelId: string,
   time: number,
-  lang: string
+  lang: string,
+  role: string
 ): Promise<TimerType | string> {
   const languagePack = loadLanguage(lang);
   const lpcode = languagePack.code.timerError;
@@ -28,6 +29,7 @@ export async function createTimer(
       guildId: guildId,
       channelId: channelId,
       lang: lang,
+      role: role,
       time: time * hourMultiplier,
       status: true,
       startedAt: new Date(),
@@ -91,6 +93,15 @@ export async function changeTimerLang(lang: string, guildId: string) {
   const update = await timerModel.updateOne(
     { guildId: guildId },
     { lang: lang }
+  );
+  if (update.modifiedCount < 1) console.log("cannot update");
+  else return null;
+}
+
+export async function changeTimerRole(role: string, guildId: string) {
+  const update = await timerModel.updateOne(
+    { guildId: guildId },
+    { role: role }
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else return null;
