@@ -91,8 +91,12 @@ export interface LanguageTranscription {
     };
     current: {
       name: string;
+      set: string;
+      interval: string;
       valueOne?: string;
       valueMany?: string;
+      status?: string;
+      role?: string;
     };
     invalid: {
       name: string;

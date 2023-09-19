@@ -94,8 +94,12 @@ export default <LanguageTranscription>{
     },
     current: {
       name: "Timer attuale:",
+      set: "Timer impostato a",
+      interval: "Intervallo:",
       valueOne: "ora",
       valueMany: "ore",
+      status: "stato:",
+      role: "ruolo taggato:",
     },
     invalid: {
       name: "Il valore",
