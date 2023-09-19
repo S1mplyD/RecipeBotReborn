@@ -57,9 +57,14 @@ export async function startTimer(
         else {
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
-            .setImage(recipe.img)
+            .setImage(
+              recipe.img != ""
+                ? recipe.img
+                : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
+            )
             .setColor(constants.message.color)
-            .setDescription(`${recipe.desc} <@&${timer.role}>`);
+            .setDescription(`${recipe.desc} <@&${timer.role}>`)
+            .setURL(recipe.url);
           try {
             let featuredDataString = "";
             recipe.featuredData.forEach((data, index) => {
@@ -96,9 +101,14 @@ export async function startTimer(
           else {
             const recipeEmbed = new EmbedBuilder()
               .setTitle(recipe.name)
-              .setImage(recipe.img)
+              .setImage(
+                recipe.img != ""
+                  ? recipe.img
+                  : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
+              )
               .setColor(constants.message.color)
-              .setDescription(`${recipe.desc} <@&${timer.role}>`);
+              .setDescription(`${recipe.desc} <@&${timer.role}>`)
+              .setURL(recipe.url);
             try {
               let featuredDataString = "";
               recipe.featuredData.forEach((data, index) => {
