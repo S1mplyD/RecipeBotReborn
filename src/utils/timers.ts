@@ -98,7 +98,7 @@ export async function startTimer(
               .setTitle(recipe.name)
               .setImage(recipe.img)
               .setColor(constants.message.color)
-              .setDescription(recipe.desc);
+              .setDescription(`${recipe.desc} <@&${timer.role}>`);
             try {
               let featuredDataString = "";
               recipe.featuredData.forEach((data, index) => {
