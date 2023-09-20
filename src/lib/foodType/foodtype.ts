@@ -1,5 +1,6 @@
 import fs from "fs";
 import { getCategories } from "../../database/querys/recipe";
+import path from "path";
 
 export async function sortByFoodType(lang: string): Promise<string[]> {
   const categories: string[] = await getCategories(lang);
@@ -10,7 +11,7 @@ export async function sortByFoodType(lang: string): Promise<string[]> {
 export async function getCountriesCategories() {
   let countries: string[] = [];
 
-  const jsonRaw = fs.readFileSync("foodCountry.json");
+  const jsonRaw = fs.readFileSync(path.join(__dirname, "foodCountry.json"));
   const json = JSON.parse(jsonRaw.toString());
   for (let i of json) {
     for (let j of i.cuisines) {
