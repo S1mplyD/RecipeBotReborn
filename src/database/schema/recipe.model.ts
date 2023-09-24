@@ -5,6 +5,8 @@ interface Recipe {
   img: string;
   name: string;
   category: string;
+  ingredients: string[];
+  cuisine: string;
   desc: string;
   lang: string;
   featuredData: string[];
@@ -17,6 +19,8 @@ const recipeSchema = new Schema<RecipeDocument>({
   img: { type: String },
   name: { type: String, required: true },
   category: { type: String },
+  cuisine: { type: String },
+  ingredients: { type: [String] },
   desc: { type: String, required: true },
   lang: { type: String, required: true },
   featuredData: { type: [String] },
