@@ -22,7 +22,10 @@ module.exports = {
     .setName("list")
     .setDescription("Show the list of categories")
     .addStringOption((option) =>
-      option.setName("type").setDescription("country").setRequired(false),
+      option
+        .setName("type")
+        .setDescription("country | ingredients")
+        .setRequired(false),
     ),
   async execute(interaction: CommandInteraction, guild: GuildType) {
     const permissionError = checkPermissions(interaction);
@@ -70,7 +73,6 @@ module.exports = {
           await interaction.reply({
             embeds: [await embedMessage(page)],
             components: [row],
-            ephemeral: true,
           });
           const filter = (i) =>
             (i.customId === "forward" ||
