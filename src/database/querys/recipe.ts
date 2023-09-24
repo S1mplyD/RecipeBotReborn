@@ -1,6 +1,26 @@
 import recipeModel from "../schema/recipe.model";
 import { RecipeType } from "../../utils/types";
 
+export async function getCuisineCategories(lang: string) {
+  const categories: string[] = await recipeModel
+    .find({ lang: lang })
+    .where("cuisine")
+    .ne("")
+    .distinct("cuisine");
+
+  return categories;
+}
+
+export async function getIngredientsCategory(lang: string) {
+  const categories: string[] = await recipeModel
+    .find({ lang: lang })
+    .where("ingredients")
+    .ne("")
+    .distinct("ingredients");
+
+  return categories;
+}
+
 export async function getCategories(lang: string) {
   const categories: string[] = await recipeModel
     .find({ lang: lang })
@@ -10,7 +30,6 @@ export async function getCategories(lang: string) {
 
   return categories;
 }
-
 /**
  * Function that find a recipe if the value {name} is included in the name or in the description
  * @param name research value
@@ -22,13 +41,18 @@ export async function getRecipeName(name: string, lang: string) {
       { category: { $regex: name, $options: "i" } },
       { name: { $regex: name, $options: "i" } },
       { desc: { $regex: name, $options: "i" } },
+      { cuisine: { $regex: name, $options: "i" } },
+      { ingredients: { $regex: name, $options: "i" } },
     ],
     lang: lang,
   });
   let priorityRecipes: RecipeType[] = [];
-  // const recipe = recipes[Math.floor(Math.random() * recipes.length)];
   for (let i of recipes) {
-    if (i.category.includes(name)) {
+    if (
+      i.category.includes(name) ||
+      i.cuisine.includes(name) ||
+      i.ingredients.includes(name)
+    ) {
       for (let j = 0; j < 3; j++) {
         priorityRecipes.push(i);
       }

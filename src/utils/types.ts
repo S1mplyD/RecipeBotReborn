@@ -13,6 +13,8 @@ export type RecipeType = {
   img: string;
   name: string;
   category: string;
+  cuisine: string;
+  ingredients: string[];
   desc: string;
   lang: string;
   featuredData: string[];

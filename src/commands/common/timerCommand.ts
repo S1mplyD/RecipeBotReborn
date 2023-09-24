@@ -138,7 +138,7 @@ module.exports = {
                   interaction.guildId!,
                   interaction.channelId,
                   args.value as unknown as number,
-                  guild.lang
+                  guild.lang,
                 );
 
                 if (typeof newTimer == "string") {
@@ -167,7 +167,7 @@ module.exports = {
               try {
                 const updatedTimer = await updateTimer(
                   timer,
-                  args.value as unknown as number
+                  args.value as unknown as number,
                 );
                 if (updatedTimer) {
                   // Creation ERROR (input time was less than 1 or more than 24)
@@ -178,7 +178,7 @@ module.exports = {
                 } else {
                   // Creation SUCCESSFUL (input time was more than 1 and less than 24)
                   const newTimer: TimerType | null = await getTimerByGuildId(
-                    timer.guildId
+                    timer.guildId,
                   );
 
                   // Start the updated timer
