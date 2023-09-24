@@ -28,7 +28,7 @@ module.exports = {
     if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
       interaction.reply("You have no favorite recipes");
     else {
-      let page = 0;
+      let page: number = 0;
       let chunk: number[] = [];
       for (let i = 0; i < recipes.length; i += 5) {
         chunk.push(Math.min(5, recipes.length - i));
@@ -46,10 +46,10 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId("remove")
           .setEmoji("❌")
-          .setStyle(ButtonStyle.Secondary)
+          .setStyle(ButtonStyle.Secondary),
       );
 
-      const embedMessage = async (page) => {
+      const embedMessage = async (page: number) => {
         let embeds: EmbedBuilder[] = [];
         for (let i = 0; i < chunk[page]; i++) {
           const recipeEmbed = new EmbedBuilder()
@@ -66,7 +66,7 @@ module.exports = {
         row.components[1].setDisabled(true);
       }
 
-      const response = await interaction.reply({
+      await interaction.reply({
         embeds: await embedMessage(page),
         components: [row],
         ephemeral: true,
