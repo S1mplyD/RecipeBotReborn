@@ -10,7 +10,7 @@ import {
 import { Interval, RecipeType, TimerType } from "./types";
 import constants from "./constants";
 const hourMultiplier = 1000 * 60 * 60;
-import { getRandomRecipe } from "../database/querys/recipe";
+import { getRandomRecipe, getRecipeName } from "../database/querys/recipe";
 import { updateTimer } from "../database/querys/timers";
 import { time } from "console";
 
@@ -51,8 +51,12 @@ export async function startTimer(
       : timer.time - (now.getTime() - timer.startedAt.getTime());
     if (timeLeft < 0) {
       if (channel && channel.isTextBased()) {
-        const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
-
+        const recipe: RecipeType | null = timer.category
+          ? await getRecipeName(timer.category, timer.lang)
+          : await getRandomRecipe(timer.lang);
+        timer.category
+          ? console.log("getRecipeName")
+          : console.log("getRandomRecipe");
         if (!recipe) channel.send("not found");
         else {
           const recipeEmbed = new EmbedBuilder()
@@ -95,8 +99,12 @@ export async function startTimer(
     } else {
       interval = setInterval(async () => {
         if (channel && channel.isTextBased()) {
-          const recipe: RecipeType | null = await getRandomRecipe(timer.lang);
-
+          const recipe: RecipeType | null = timer.category
+            ? await getRecipeName(timer.category, timer.lang)
+            : await getRandomRecipe(timer.lang);
+          timer.category
+            ? console.log("getRecipeName")
+            : console.log("getRandomRecipe");
           if (!recipe) channel.send("not found");
           else {
             const recipeEmbed = new EmbedBuilder()
