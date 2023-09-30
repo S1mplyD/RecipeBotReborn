@@ -1,6 +1,9 @@
-import { CommandInteraction, PermissionFlagsBits } from "discord.js";
+import {
+  CommandInteraction,
+  PermissionFlagsBits,
+  AutocompleteInteraction,
+} from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
-// const { ButtonBuilder, ActionRowBuilder, ButtonStyle } = require("discord.js"); //Buttons integration WIP
 import { GuildType, TimerType } from "../../utils/types";
 import { startTimer, stopTimer } from "../../utils/timers";
 import {
@@ -13,6 +16,8 @@ import { client } from "../..";
 import { checkPermissions } from "../../utils/checkPermissions";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
+import { cleaned } from "../../utils/listCleaner";
+import test from "node:test";
 
 const hourMultiplier = 1000 * 60 * 60;
 module.exports = {
@@ -27,54 +32,179 @@ module.exports = {
         .setDescription("Time (in hours), on or off")
         .setRequired(false);
       return option;
+    })
+    .addStringOption((option) => {
+      option
+        .setName("category")
+        .setDescription("Specify a category")
+        .setAutocomplete(true)
+        .setRequired(false);
+      return option;
     }),
-  async execute(interaction: CommandInteraction, guild: GuildType) {
-    //Buttons integration WIP
-    // ------------------------------------------------------------------------------
-    // const yes_button = new ButtonBuilder()
-    //   .setCustomId("yes")
-    //   .setLabel("Yes")
-    //   .setStyle(ButtonStyle.Primary);
-    // const no_button = new ButtonBuilder()
-    //   .setCustomId("no")
-    //   .setLabel("No")
-    //   .setStyle(ButtonStyle.Secondary);
-    // const row = new ActionRowBuilder().addComponents(yes_button, no_button);
-    // ------------------------------------------------------------------------------
 
+  async autocomplete(interaction: AutocompleteInteraction, guild: GuildType) {
+    const categories: string[] | undefined = await cleaned(guild.lang);
+    console.log("categories: ", categories);
+    const focusedValue = interaction.options.getFocused().toLowerCase();
+    if (categories) {
+      if (focusedValue) {
+        let slicedFiltered;
+        const foundCategoryStart = categories.filter((category) =>
+          category.toLowerCase().startsWith(focusedValue)
+        );
+        if (foundCategoryStart.length >= 25) {
+          slicedFiltered = foundCategoryStart.slice(0, 25);
+        } else {
+          const foundCategoryIncludes = categories.filter((category) =>
+            category.toLowerCase().includes(focusedValue)
+          );
+
+          const uniqueFoundCategoryIncludes = foundCategoryIncludes.filter(
+            (category) => !foundCategoryStart.includes(category)
+          );
+
+          slicedFiltered = foundCategoryStart.concat(
+            uniqueFoundCategoryIncludes.slice(0, 25 - foundCategoryStart.length)
+          );
+        }
+
+        await interaction.respond(
+          slicedFiltered.map((category) => ({
+            name: category,
+            value: category,
+          }))
+        );
+      } else {
+        await interaction.respond([]);
+      }
+    }
+  },
+
+  async execute(interaction: CommandInteraction, guild: GuildType) {
     let lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
     const lpcode = languagePack.code.timer;
 
-    const args = interaction.options.get("time");
+    const timeArg = interaction.options.get("time");
+    const category = interaction.options.get("category");
     const permissionError = checkPermissions(interaction);
 
     if (!permissionError) {
       // Check if command has arguments
-      if (!args) {
+
+      let foundCategory;
+      if (category) {
+        // Command has category argument, return category closest to given value, "undefined" if none are found
+        if (
+          typeof category.value === "string" &&
+          isNaN(parseInt(category.value))
+        ) {
+          const categories: string[] | undefined = await cleaned(guild.lang);
+          // console.log("categories: ", categories);
+          const categoryValue = category.value.toLowerCase();
+          console.log(categoryValue);
+          if (categories) {
+            foundCategory = categories.filter((category) =>
+              category.toLowerCase().startsWith(categoryValue)
+            )[0];
+            if (foundCategory == undefined) {
+              foundCategory = categories.filter((category) =>
+                category.toLowerCase().includes(categoryValue)
+              )[0];
+            }
+            console.log("input category: ", categoryValue);
+            console.log("found category element: ", foundCategory);
+          }
+        }
+      }
+
+      if (!timeArg) {
         const timer = await getTimerByGuildId(interaction.guildId!);
 
-        // If the guild already has a timer, reply with its time. (1)
+        // If the guild already has a timer, check if user gave a vaid category, otherwise reply with timer info.
         if (timer) {
-          let timer_status = "off";
-          timer.status == false
-            ? (timer_status = "off")
-            : (timer_status = "on");
+          if (foundCategory) {
+            // #########################
+            // ###  UPDATE CATEGORY  ###
+            // #########################
 
-          const reply =
-            timer.time / hourMultiplier == 1
-              ? // prettier-ignore
-                // Eg. "Current timer is set to 1 hour and is currently off"
-                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** and is currently ***${timer_status}***`
-              : // prettier-ignore
-                // Eg. "Current timer is set to 4 hours and is currently off"
-                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** and is currently ***${timer_status}***`;
-          await interaction.deferReply({ ephemeral: true });
-          await interaction.editReply({ content: reply });
+            try {
+              const updatedTimer = await updateTimer(
+                timer,
+                undefined,
+                foundCategory
+              );
+              if (updatedTimer) {
+                // Category update ERROR
+                await interaction.deferReply({ ephemeral: true });
+                await interaction.editReply({
+                  content: updatedTimer,
+                });
+              } else {
+                // Category update SUCCESSFUL
+                const newTimer: TimerType | null = await getTimerByGuildId(
+                  timer.guildId
+                );
+
+                // Start the updated timer
+                await stopTimer(timer);
+                await setTimerStatus(newTimer!, true);
+                await startTimer(newTimer!, client, true);
+                if (timer) {
+                  const reply =
+                    timer.time / hourMultiplier == 1
+                      ? // prettier-ignore
+                        // Eg. "Current timer is set to 1 hour with category Pasta"
+                        ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** with category ***${foundCategory}***`
+                      : // prettier-ignore
+                        // Eg. "Current timer is set to 4 hours with category Pasta"
+                        ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** with category ***${foundCategory}***`;
+                  await interaction.deferReply({ ephemeral: true });
+                  await interaction.editReply({ content: reply });
+                }
+              }
+            } catch {
+              interaction.reply({
+                // Eg. "Value "A" is not a valid timer argument"
+                content: `${lpcode.invalid.name} **"${foundCategory}"** ${lpcode.invalid.value}`,
+                ephemeral: true,
+              });
+            }
+          } else if (!foundCategory && category) {
+            // Category was given but none found --> Input category was not valid (Eg. "1","!","-", ecc.)
+            interaction.reply({
+              // Eg. "Value "1" is not a valid timer argument"
+              content: `${lpcode.invalid.name} **"${category.value}"** ${lpcode.invalid.value}`,
+              ephemeral: true,
+            });
+          } else {
+            // No category field, guild has timer, show timer info
+            let timer_status = "off";
+            timer.status == false
+              ? (timer_status = "off")
+              : (timer_status = "on");
+
+            console.log(timer.category);
+            const categoryString =
+              timer.category !== undefined && timer.category != ""
+                ? ` with category ***${timer.category}***`
+                : "";
+
+            const reply =
+              timer.time / hourMultiplier == 1
+                ? // prettier-ignore
+                  // Eg. "Current timer is set to 1 hour and is currently off"
+                  ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}***${categoryString} and is currently ***${timer_status}***`
+                : // prettier-ignore
+                  // Eg. "Current timer is set to 4 hours and is currently off"
+                  ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}***${categoryString} and is currently ***${timer_status}***`;
+            await interaction.deferReply({ ephemeral: true });
+            await interaction.editReply({ content: reply });
+          }
         }
-        // (1) Otherwise, prompt to add a timer
+        // Guild has no timer, prompt to add a timer
         else {
           await interaction.deferReply({ ephemeral: true });
           await interaction.editReply({
@@ -82,11 +212,11 @@ module.exports = {
           });
         }
       } else {
-        // Command has no arguments
+        // Command has timeArg argument
         const timer = await getTimerByGuildId(interaction.guildId!);
 
-        if (typeof args.value === "string") {
-          const lowerCaseArgs = args.value.toLowerCase();
+        if (typeof timeArg.value === "string") {
+          const lowerCaseArgs = timeArg.value.toLowerCase();
 
           if (lowerCaseArgs === "off") {
             // ##########################
@@ -126,85 +256,113 @@ module.exports = {
               }); // Guild has no timer
             }
           }
-          // All other cases where timer is neither "off" nor "on" -> "args" is a number
+          // All other cases where timeArg is neither "off" nor "on"
           else {
             if (!timer) {
+              // Guild has no timer set
+
               // ##########################
               // ###  CREATE NEW TIMER  ###
               // ##########################
 
-              try {
-                const newTimer = await createTimer(
-                  interaction.guildId!,
-                  interaction.channelId,
-                  args.value as unknown as number,
-                  guild.lang,
-                );
-
-                if (typeof newTimer == "string") {
-                  // Creation ERROR (input time was less than 1 or more than 24)
-                  await interaction.deferReply({ ephemeral: true });
-                  await interaction.reply({ content: newTimer });
-                } else {
-                  // Creation SUCCESSFUL (input time was more than 1 and less than 24)
-                  await startTimer(newTimer, client, true);
-                  await interaction.deferReply({ ephemeral: true });
-                  await interaction.editReply({
-                    content: lpcode.started, // Eg. "Timer started"
-                  });
-                }
-              } catch {
+              if (!foundCategory && category) {
+                // Category was given but none found --> Input category was not valid (Eg. "1","!","-", ecc.)
                 interaction.reply({
-                  content: `${lpcode.invalid.name} **"${args.value}"** ${lpcode.invalid.value}`, // Eg. "Value "A" is not a valid timer argument"
+                  // Eg. "Value "1" is not a valid timer argument"
+                  content: `${lpcode.invalid.name} **"${category.value}"** ${lpcode.invalid.value}`,
                   ephemeral: true,
                 });
+              } else {
+                try {
+                  const newTimer = await createTimer(
+                    interaction.guildId!,
+                    interaction.channelId,
+                    timeArg.value as unknown as number,
+                    foundCategory as unknown as string,
+                    guild.lang
+                  );
+
+                  if (typeof newTimer == "string") {
+                    // Creation ERROR (input time was less than 1 or more than 24)
+                    await interaction.deferReply({ ephemeral: true });
+                    await interaction.reply({ content: newTimer });
+                  } else {
+                    // Creation SUCCESSFUL (input time was more than 1 and less than 24)
+                    await startTimer(newTimer, client, true);
+                    await interaction.deferReply({ ephemeral: true });
+                    await interaction.editReply({
+                      content: lpcode.started, // Eg. "Timer started"
+                    });
+                  }
+                } catch {
+                  interaction.reply({
+                    content: `${lpcode.invalid.name} **"${timeArg.value}"** ${lpcode.invalid.value}`, // Eg. "Value "A" is not a valid timer argument"
+                    ephemeral: true,
+                  });
+                }
               }
             } else {
+              // Guild has a timer
+
               // ######################
               // ###  UPDATE TIMER  ###
               // ######################
 
-              try {
-                const updatedTimer = await updateTimer(
-                  timer,
-                  args.value as unknown as number,
-                );
-                if (updatedTimer) {
-                  // Creation ERROR (input time was less than 1 or more than 24)
-                  await interaction.deferReply({ ephemeral: true });
-                  await interaction.editReply({
-                    content: updatedTimer,
-                  });
-                } else {
-                  // Creation SUCCESSFUL (input time was more than 1 and less than 24)
-                  const newTimer: TimerType | null = await getTimerByGuildId(
-                    timer.guildId,
-                  );
-
-                  // Start the updated timer
-                  await stopTimer(timer);
-                  await setTimerStatus(newTimer!, true);
-                  await startTimer(newTimer!, client, true);
-                  if (timer) {
-                    const reply =
-                      args.value == "1"
-                        ? // Eg. "Current timer is set to 1 hour"
-                          ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
-                        : // Eg. "Current timer is set to 4 hours"
-                          ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
-                    await interaction.deferReply({ ephemeral: true });
-                    await interaction.editReply({
-                      content: reply,
-                      /*components: [row]*/ //Buttons integration WIP
-                    });
-                  }
-                }
-              } catch {
+              if (!foundCategory && category) {
+                // Category was given but none found --> Input category was not valid (Eg. "1","!","-", ecc.)
                 interaction.reply({
-                  // Eg. "Value "A" is not a valid timer argument"
-                  content: `${lpcode.invalid.name} **"${args.value}"** ${lpcode.invalid.value}`,
+                  // Eg. "Value "1" is not a valid timer argument"
+                  content: `${lpcode.invalid.name} **"${category.value}"** ${lpcode.invalid.value}`,
                   ephemeral: true,
                 });
+              } else {
+                try {
+                  const updatedTimer = await updateTimer(
+                    timer,
+                    timeArg.value as unknown as number,
+                    foundCategory as unknown as string
+                  );
+                  if (updatedTimer) {
+                    // Time (and possibly Category) update ERROR (input time was less than 1 or more than 24)
+                    await interaction.deferReply({ ephemeral: true });
+                    await interaction.editReply({
+                      content: updatedTimer,
+                    });
+                  } else {
+                    // Time (and possibly Category) update SUCCESSFUL (input time was more than 1 and less than 24)
+                    const newTimer: TimerType | null = await getTimerByGuildId(
+                      timer.guildId
+                    );
+
+                    // Start the updated timer
+                    await stopTimer(timer);
+                    await setTimerStatus(newTimer!, true);
+                    await startTimer(newTimer!, client, true);
+                    if (timer) {
+                      const categoryString =
+                        foundCategory !== undefined
+                          ? ` with category ***${foundCategory}***`
+                          : "";
+
+                      const reply =
+                        timeArg.value == "1"
+                          ? // Eg. "Current timer is set to 1 hour" / "Current timer is set to 1 hour with category Pasta"
+                            ` ${lpcode.current.name} ***${timeArg.value}  ${lpcode.current.valueOne}***${categoryString}`
+                          : // Eg. "Current timer is set to 4 hours" / "Current timer is set to 1 hour with category Pasta"
+                            ` ${lpcode.current.name} ***${timeArg.value}  ${lpcode.current.valueMany}***${categoryString}`;
+                      await interaction.deferReply({ ephemeral: true });
+                      await interaction.editReply({
+                        content: reply,
+                      });
+                    }
+                  }
+                } catch {
+                  interaction.reply({
+                    // Eg. "Value "A" is not a valid timer argument"
+                    content: `${lpcode.invalid.name} **"${timeArg.value}"** ${lpcode.invalid.value}`,
+                    ephemeral: true,
+                  });
+                }
               }
             }
           }
