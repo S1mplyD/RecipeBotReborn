@@ -62,7 +62,7 @@ export async function getRecipeName(name: string, lang: string) {
       }
     } else priorityRecipes.push(i);
   }
-  console.log(priorityRecipes);
+  // console.log(priorityRecipes);
 
   if (recipes.length < 1) return null;
   else {
