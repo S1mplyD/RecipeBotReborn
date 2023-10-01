@@ -153,14 +153,18 @@ module.exports = {
                 await setTimerStatus(newTimer!, true);
                 await startTimer(newTimer!, client, true);
                 if (timer) {
-                  const reply =
-                    timer.time / hourMultiplier == 1
-                      ? // prettier-ignore
-                        // Eg. "Current timer is set to 1 hour with category Pasta"
-                        ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** with category ***${foundCategory}***`
-                      : // prettier-ignore
-                        // Eg. "Current timer is set to 4 hours with category Pasta"
-                        ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** with category ***${foundCategory}***`;
+                  const timer_status = timer.status == false ? "off" : "on";
+                  const reply = `${lpcode.current.updated}\n${
+                    lpcode.current.interval
+                  } **${timer.time / hourMultiplier} ${
+                    timer.time / hourMultiplier === 1
+                      ? lpcode.current.valueOne
+                      : lpcode.current.valueMany
+                  }** | ${lpcode.current.status} **${timer_status}**${
+                    foundCategory && foundCategory !== ""
+                      ? ` | ${lpcode.current.category} **${foundCategory}**`
+                      : ""
+                  }`;
                   await interaction.deferReply({ ephemeral: true });
                   await interaction.editReply({ content: reply });
                 }
@@ -181,25 +185,21 @@ module.exports = {
             });
           } else {
             // No category field, guild has timer, show timer info
-            let timer_status = "off";
-            timer.status == false
-              ? (timer_status = "off")
-              : (timer_status = "on");
-
             console.log(timer.category);
-            const categoryString =
-              timer.category !== undefined && timer.category != ""
-                ? ` with category ***${timer.category}***`
-                : "";
 
-            const reply =
-              timer.time / hourMultiplier == 1
-                ? // prettier-ignore
-                  // Eg. "Current timer is set to 1 hour and is currently off"
-                  ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}***${categoryString} and is currently ***${timer_status}***`
-                : // prettier-ignore
-                  // Eg. "Current timer is set to 4 hours and is currently off"
-                  ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}***${categoryString} and is currently ***${timer_status}***`;
+            const timer_status = timer.status == false ? "off" : "on";
+            const reply = `${lpcode.current.current}\n${
+              lpcode.current.interval
+            } **${timer.time / hourMultiplier} ${
+              timer.time / hourMultiplier === 1
+                ? lpcode.current.valueOne
+                : lpcode.current.valueMany
+            }** | ${lpcode.current.status} **${timer_status}**${
+              timer.category && timer.category !== ""
+                ? ` | ${lpcode.current.category} **${timer.category}**`
+                : ""
+            }`;
+
             await interaction.deferReply({ ephemeral: true });
             await interaction.editReply({ content: reply });
           }
@@ -339,17 +339,18 @@ module.exports = {
                     await setTimerStatus(newTimer!, true);
                     await startTimer(newTimer!, client, true);
                     if (timer) {
-                      const categoryString =
-                        foundCategory !== undefined
-                          ? ` with category ***${foundCategory}***`
-                          : "";
-
-                      const reply =
-                        timeArg.value == "1"
-                          ? // Eg. "Current timer is set to 1 hour" / "Current timer is set to 1 hour with category Pasta"
-                            ` ${lpcode.current.name} ***${timeArg.value}  ${lpcode.current.valueOne}***${categoryString}`
-                          : // Eg. "Current timer is set to 4 hours" / "Current timer is set to 1 hour with category Pasta"
-                            ` ${lpcode.current.name} ***${timeArg.value}  ${lpcode.current.valueMany}***${categoryString}`;
+                      const timer_status = timer.status == false ? "off" : "on";
+                      const reply = `${lpcode.current.updated}\n${
+                        lpcode.current.interval
+                      } **${timeArg.value} ${
+                        timeArg.value === "1"
+                          ? lpcode.current.valueOne
+                          : lpcode.current.valueMany
+                      }** | ${lpcode.current.status} **${timer_status}**${
+                        foundCategory && foundCategory !== ""
+                          ? ` | ${lpcode.current.category} **${foundCategory}**`
+                          : ""
+                      }`;
                       await interaction.deferReply({ ephemeral: true });
                       await interaction.editReply({
                         content: reply,
