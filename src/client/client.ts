@@ -5,10 +5,12 @@ import {
   CommandInteraction,
   Interaction,
   AutocompleteInteraction,
+  ButtonInteraction,
 } from "discord.js";
 
 import { GuildType } from "../utils/types";
 import { getGuildByGuildId } from "../database/querys/guild";
+import { handleButtonInteraction } from "../utils/buttonHandler";
 
 export class CustomClient extends Client {
   public commands: Collection<string, any>;
@@ -68,6 +70,18 @@ export class CustomClient extends Client {
         try {
           await command.autocomplete(
             interaction as AutocompleteInteraction,
+            guild as GuildType
+          );
+        } catch (error) {
+          console.error("caught error: ", error);
+        }
+      } else if (interaction.isButton()) {
+
+        const guild = await getGuildByGuildId(interaction.guildId!);
+
+        try {
+          await handleButtonInteraction(
+            interaction as ButtonInteraction,
             guild as GuildType
           );
         } catch (error) {
