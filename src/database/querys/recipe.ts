@@ -73,6 +73,11 @@ export async function getRecipeName(name: string, lang: string) {
 export async function getRandomRecipe(lang: string) {
   const recipeNumbers = await recipeModel.find({ lang: lang }).countDocuments();
   const random = Math.floor(Math.random() * recipeNumbers);
-  const recipe = await recipeModel.findOne({ lang: lang }).skip(random).lean();
+  const recipe = await recipeModel.findOne({ lang: lang }).skip(random);
+  return recipe;
+}
+
+export async function getRecipeById(id: string) {
+  const recipe: RecipeType | null = await recipeModel.findById(id);
   return recipe;
 }
