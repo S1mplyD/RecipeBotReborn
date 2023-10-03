@@ -4,17 +4,11 @@ import {
   ButtonStyle,
   CommandInteraction,
   EmbedBuilder,
-  ReactionUserManager,
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, RecipeType, UserType } from "../../utils/types";
 import constants from "../../utils/constants";
 import { getRandomRecipe, getRecipeName } from "../../database/querys/recipe";
-import {
-  addRecipeToUserFavourite,
-  createUser,
-  getUser,
-} from "../../database/querys/user";
 import { checkPermissions } from "../../utils/checkPermissions";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
@@ -44,17 +38,22 @@ module.exports = {
     if (!permissionError) {
       if (!args) {
         const recipe: RecipeType | null = await getRandomRecipe(guild.lang);
+
         if (!recipe) interaction.reply("not found");
         else {
+          console.log(
+            "recipe name: ",
+            recipe.name,
+            "\nrecipe_id: ",
+            recipe._id.toString()
+          );
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
-            .setImage(
-              recipe.img != ""
-                ? recipe.img
-                : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
-            )
             .setColor(constants.message.color)
-            .setDescription(recipe.desc);
+            .setDescription(recipe.desc)
+            if (recipe.img !== "") {
+              recipeEmbed.setImage(recipe.img);
+            }
 
           try {
             let featuredDataString = "";
@@ -77,46 +76,29 @@ module.exports = {
             .setURL(recipe.url)
             .setTimestamp()
             .setFooter({
-              text: lpcode.category + ": " + recipe.category ?? " ",
-              iconURL: constants.botImage,
+              text: lpcode.category + ": " + recipe.category ?? " "
             });
 
-          const button = new ButtonBuilder()
-            .setCustomId("add")
+          const add_favorite_recipe = new ButtonBuilder()
+            .setCustomId(`add_favorite_recipe:${recipe._id.toString()}`)
             .setLabel("Add")
-            .setStyle(ButtonStyle.Primary)
-            .setEmoji("⭐");
+            .setStyle(ButtonStyle.Primary);
+
+          const remove_favorite_recipe = new ButtonBuilder()
+            .setCustomId(`remove_favorite_recipe:${recipe._id.toString()}`)
+            .setLabel("Remove")
+            .setStyle(ButtonStyle.Secondary);
 
           const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            button
+            add_favorite_recipe,
+            remove_favorite_recipe
           );
+
           await interaction.deferReply();
-          const response = await interaction.editReply({
+          await interaction.editReply({
             embeds: [recipeEmbed],
             components: [row],
           });
-          const collectorFilter = (i) => i.user.id === interaction.user.id;
-          try {
-            const confirmation = await response.awaitMessageComponent({
-              filter: collectorFilter,
-              time: 60000,
-            });
-            const user: UserType | Error = await getUser(interaction.user.id);
-            if (user instanceof Error) await createUser(interaction.user.id);
-            if (confirmation.customId === "add") {
-              await addRecipeToUserFavourite(interaction.user.id, recipe.url);
-              confirmation.update({
-                content: `Recipe ${recipe.name} added to favorites`,
-              });
-            } else {
-              interaction.reply("error occurred");
-            }
-          } catch (e) {
-            await interaction.reply({
-              content: "Confirmation not received within 1 minute, cancelling",
-              components: [],
-            });
-          }
         }
       } else {
         let recipeName = args?.value as string;
@@ -128,21 +110,35 @@ module.exports = {
           console.log("db name:", recipe.name);
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipe.name)
-            .setImage(
-              recipe.img != ""
-                ? recipe.img
-                : "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128"
-            )
             .setColor(constants.message.color)
             .setDescription(recipe.desc)
             .setURL(recipe.url)
             .setTimestamp()
             .setFooter({
-              text: "Category: " + recipe.category ?? " ",
-              iconURL: constants.botImage,
-            });
+              text: "Category: " + recipe.category ?? " "
+            })
+            if (recipe.img !== "") {
+              recipeEmbed.setImage(recipe.img);
+            }
+          const add_favorite_recipe = new ButtonBuilder()
+            .setCustomId(`add_favorite_recipe:${recipe._id.toString()}`)
+            .setLabel("Add")
+            .setStyle(ButtonStyle.Primary);
+
+          const remove_favorite_recipe = new ButtonBuilder()
+            .setCustomId(`remove_favorite_recipe:${recipe._id.toString()}`)
+            .setLabel("Remove")
+            .setStyle(ButtonStyle.Secondary);
+
+          const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            add_favorite_recipe,
+            remove_favorite_recipe
+          );
           await interaction.deferReply();
-          await interaction.editReply({ embeds: [recipeEmbed] });
+          await interaction.editReply({
+            embeds: [recipeEmbed],
+            components: [row],
+          });
         } else await interaction.reply("No matching recipe name found");
       }
     } else
