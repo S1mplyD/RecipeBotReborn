@@ -9,7 +9,7 @@ import { CommandInteraction } from "discord.js";
 import { GuildType, RecipeType, UserType } from "../../utils/types";
 import {
   createUser,
-  getAllUserFavourites,
+  getAllUserFavorites,
   getUser,
 } from "../../database/querys/user";
 import constants from "../../utils/constants";
@@ -23,8 +23,9 @@ module.exports = {
     if (user instanceof Error) {
       await createUser(interaction.user.id);
     }
-    const recipes: RecipeType[] | Error | undefined =
-      await getAllUserFavourites(interaction.user.id);
+    const recipes: RecipeType[] | Error | undefined = await getAllUserFavorites(
+      interaction.user.id
+    );
     if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
       interaction.reply("You have no favorite recipes");
     else {
@@ -42,21 +43,41 @@ module.exports = {
         new ButtonBuilder()
           .setCustomId("forward")
           .setEmoji("▶️")
-          .setStyle(ButtonStyle.Success),
+          .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
           .setCustomId("remove")
           .setEmoji("❌")
-          .setStyle(ButtonStyle.Secondary),
+          .setStyle(ButtonStyle.Secondary)
       );
 
       const embedMessage = async (page: number) => {
         let embeds: EmbedBuilder[] = [];
         for (let i = 0; i < chunk[page]; i++) {
+          let description: string;
+          const currentRecipe = recipes[i + page * 5];
+
+          if (currentRecipe.desc.length > 100) {
+            const lastSpaceIndex = currentRecipe.desc.lastIndexOf(" ", 100);
+            if (lastSpaceIndex !== -1) {
+              description = `${currentRecipe.desc.substring(
+                0,
+                lastSpaceIndex
+              )}...`;
+            } else {
+              description = `${currentRecipe.desc.substring(0, 100)}...`;
+            }
+          } else {
+            description = currentRecipe.desc;
+          }
+
           const recipeEmbed = new EmbedBuilder()
-            .setTitle(recipes[i + page * 5].name)
+            .setTitle(currentRecipe.name)
             .setColor(constants.message.color)
-            .setDescription(recipes[i + page * 5].desc)
-            .setURL(recipes[i + page * 5].url);
+            .setDescription(description)
+            .setURL(currentRecipe.url);
+          if (currentRecipe.img !== "") {
+            recipeEmbed.setThumbnail(currentRecipe.img);
+          }
           embeds.push(recipeEmbed);
         }
         return embeds;
