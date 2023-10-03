@@ -9,6 +9,7 @@ export type GuildType = {
 };
 
 export type RecipeType = {
+  _id: any;
   url: string;
   img: string;
   name: string;
