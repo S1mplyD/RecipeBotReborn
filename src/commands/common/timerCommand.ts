@@ -17,7 +17,7 @@ import { checkPermissions } from "../../utils/checkPermissions";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
 import { cleaned } from "../../utils/listCleaner";
-import test from "node:test";
+
 
 const hourMultiplier = 1000 * 60 * 60;
 module.exports = {
@@ -324,18 +324,6 @@ module.exports = {
                   );
                   if (updatedTimer) {
                     // Time (and possibly Category) update ERROR (input time was less than 1 or more than 24)
-                  // Start the updated timer
-                  await stopTimer(timer);
-                  await setTimerStatus(newTimer!, true);
-                  await startTimer(newTimer!, client, true);
-                  if (timer) {
-                    const reply =
-                      args.value == "1"
-                        ? // Eg. "Current timer is set to 1 hour"
-                        ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
-                        : // Eg. "Current timer is set to 4 hours"
-                        ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
-
                     await interaction.deferReply({ ephemeral: true });
                     await interaction.editReply({
                       content: updatedTimer,

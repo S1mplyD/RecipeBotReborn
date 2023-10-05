@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { TimerType } from "../../utils/types";
 import timerModel from "../schema/timers.model";
 import loadLanguage from "../../utils/loadLanguage";
