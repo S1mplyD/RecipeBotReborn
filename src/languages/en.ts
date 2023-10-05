@@ -93,9 +93,14 @@ export default <LanguageTranscription>{
       name: "No timer set. please add a time amount (in hours) after the `/timer` command",
     },
     current: {
-      name: "Current timer is set to",
+      current: "Current timer info:",
+      updated: "Timer updated",
+      set: "Timer set to",
+      interval: "Interval:",
       valueOne: "hour",
       valueMany: "hours",
+      status: "Status:",
+      category: "Category:",
     },
     invalid: {
       name: "Value",

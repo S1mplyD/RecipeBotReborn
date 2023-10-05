@@ -6,6 +6,7 @@ interface Timer {
   time: number;
   status: boolean;
   lang: string;
+  category: string;
   startedAt: Date;
 }
 
@@ -17,6 +18,7 @@ const timerSchema = new Schema<TimerDocument>({
   time: { type: Number, required: true },
   status: { type: Boolean, required: true }, // if timer is on (true) or off (false)
   lang: { type: String, required: true },
+  category: { type: String, required: false },
   startedAt: { type: Date, required: true },
 });
 

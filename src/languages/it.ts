@@ -93,9 +93,14 @@ export default <LanguageTranscription>{
       name: "Nessun timer impostato. Aggiungi un tempo (in ore) dopo il comando `/timer`",
     },
     current: {
-      name: "Timer attuale:",
+      current: "Timer attuale:",
+      updated: "Timer aggiornato",
+      set: "Timer impostato a",
+      interval: "Intervallo:",
       valueOne: "ora",
       valueMany: "ore",
+      status: "Stato:",
+      category: "Categoria:",
     },
     invalid: {
       name: "Il valore",
