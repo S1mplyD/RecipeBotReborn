@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { Events } from "discord.js";
 import { CustomClient } from "./client/client";
 import { config } from "dotenv";

@@ -46,8 +46,8 @@ export async function getRecipeName(name: string, lang: string) {
     ],
     lang: lang,
   });
-  let priorityRecipes: RecipeType[] = [];
-  for (let i of recipes) {
+  const priorityRecipes: RecipeType[] = [];
+  for (const i of recipes) {
     if (
       i.category.includes(name) ||
       i.cuisine.includes(name) ||

@@ -11,6 +11,7 @@ import { GuildType } from "../utils/types";
 import { getGuildByGuildId } from "../database/querys/guild";
 
 export class CustomClient extends Client {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public commands: Collection<string, any>;
 
   constructor() {

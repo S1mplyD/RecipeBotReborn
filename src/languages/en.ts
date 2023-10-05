@@ -14,7 +14,7 @@ export default <LanguageTranscription>{
     },
     specificRecipe: {
       Name: "Get a specific recipe",
-      Value: '`recipe "recipe name" / "category name"`',
+      Value: "`recipe \"recipe name\" / \"category name\"`",
     },
     listAvaiableLanguages: {
       Name: "Get the list of avaiable languages",
@@ -22,11 +22,11 @@ export default <LanguageTranscription>{
     },
     changeBotLanguage: {
       Name: "Change bot language",
-      Value: '`lang "language"`',
+      Value: "`lang \"language\"`",
     },
     timer: {
       Name: "Set an auto-recipe timer",
-      Value: '`timer "on/off" "hours" `',
+      Value: "`timer \"on/off\" \"hours\" `",
     },
     categoryList: {
       Name: "Shows the recipe categories list",

@@ -81,7 +81,7 @@ module.exports = {
   },
 
   async execute(interaction: CommandInteraction, guild: GuildType) {
-    let lang: string | Error = await getGuildLang(guild.guildId);
+    const lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
@@ -324,6 +324,18 @@ module.exports = {
                   );
                   if (updatedTimer) {
                     // Time (and possibly Category) update ERROR (input time was less than 1 or more than 24)
+                  // Start the updated timer
+                  await stopTimer(timer);
+                  await setTimerStatus(newTimer!, true);
+                  await startTimer(newTimer!, client, true);
+                  if (timer) {
+                    const reply =
+                      args.value == "1"
+                        ? // Eg. "Current timer is set to 1 hour"
+                        ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
+                        : // Eg. "Current timer is set to 4 hours"
+                        ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
+
                     await interaction.deferReply({ ephemeral: true });
                     await interaction.editReply({
                       content: updatedTimer,

@@ -11,7 +11,7 @@ module.exports = {
     .setName("help")
     .setDescription("Show RecipeBot commands"),
   async execute(interaction: CommandInteraction, guild: GuildType) {
-    let lang: string | Error = await getGuildLang(guild.guildId);
+    const lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
