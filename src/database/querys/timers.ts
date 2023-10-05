@@ -67,7 +67,7 @@ export async function updateTimer(
   timer: TimerType,
   time: number
 ): Promise<string | null> {
-  let lang: string | Error = await getGuildLang(timer.guildId);
+  const lang: string | Error = await getGuildLang(timer.guildId);
   if (lang instanceof Error) return lang.message;
 
   const languagePack = loadLanguage(lang);

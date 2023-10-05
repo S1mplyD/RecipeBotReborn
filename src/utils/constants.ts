@@ -1,4 +1,4 @@
-import { PermissionFlagsBits } from "discord.js"
+import { PermissionFlagsBits } from "discord.js";
 export default {
   botImage:
     "https://images.discordapp.net/avatars/657369551121678346/01263371e45d9b162e86961bcc7f5947.png?size=128",

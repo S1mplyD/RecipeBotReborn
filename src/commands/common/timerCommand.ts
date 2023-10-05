@@ -42,7 +42,7 @@ module.exports = {
     // const row = new ActionRowBuilder().addComponents(yes_button, no_button);
     // ------------------------------------------------------------------------------
 
-    let lang: string | Error = await getGuildLang(guild.guildId);
+    const lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
@@ -66,11 +66,11 @@ module.exports = {
           const reply =
             timer.time / hourMultiplier == 1
               ? // prettier-ignore
-                // Eg. "Current timer is set to 1 hour and is currently off"
-                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** and is currently ***${timer_status}***`
+            // Eg. "Current timer is set to 1 hour and is currently off"
+              ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueOne}*** and is currently ***${timer_status}***`
               : // prettier-ignore
-                // Eg. "Current timer is set to 4 hours and is currently off"
-                ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** and is currently ***${timer_status}***`;
+            // Eg. "Current timer is set to 4 hours and is currently off"
+              ` ${lpcode.current.name} ***${timer.time / hourMultiplier}  ${lpcode.current.valueMany}*** and is currently ***${timer_status}***`;
           await interaction.deferReply({ ephemeral: true });
           await interaction.editReply({ content: reply });
         }
@@ -189,9 +189,9 @@ module.exports = {
                     const reply =
                       args.value == "1"
                         ? // Eg. "Current timer is set to 1 hour"
-                          ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
+                        ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueOne}***`
                         : // Eg. "Current timer is set to 4 hours"
-                          ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
+                        ` ${lpcode.current.name} ***${args.value}  ${lpcode.current.valueMany}***`;
                     await interaction.deferReply({ ephemeral: true });
                     await interaction.editReply({
                       content: reply,

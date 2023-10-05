@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx eslint . --ext .ts --fix. #Checking code quality based on eslint rules
+

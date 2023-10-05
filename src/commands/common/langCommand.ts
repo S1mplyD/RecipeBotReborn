@@ -12,7 +12,6 @@ import constants, {
 import loadLanguage from "../../utils/loadLanguage";
 import { updateGuildLanguage } from "../../database/querys/guild";
 import langs from "../../languages/index";
-import { getGuildLang } from "../../database/querys/guild";
 import { changeTimerLang } from "../../database/querys/timers";
 
 module.exports = {
@@ -38,7 +37,7 @@ module.exports = {
       return option;
     }),
   async execute(interaction: CommandInteraction, guild: GuildType) {
-    let language = guild.lang;
+    const language = guild.lang;
     const languagePack = loadLanguage(language);
     const lpcode = languagePack.code.languages;
 
