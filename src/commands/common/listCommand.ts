@@ -25,7 +25,7 @@ module.exports = {
       option
         .setName("type")
         .setDescription("country | ingredients")
-        .setRequired(false),
+        .setRequired(false)
     ),
   async execute(interaction: CommandInteraction, guild: GuildType) {
     const permissionError = checkPermissions(interaction);
@@ -37,7 +37,7 @@ module.exports = {
         const categories: string[] | undefined = await cleaned(guild.lang);
         if (categories) {
           let page: number = 0;
-          let chunk: number[] = [];
+          const chunk: number[] = [];
           for (let i = 0; i < categories.length; i += 50) {
             chunk.push(Math.min(50, categories.length - i));
           }
@@ -50,7 +50,7 @@ module.exports = {
             new ButtonBuilder()
               .setCustomId("forward")
               .setEmoji("▶️")
-              .setStyle(ButtonStyle.Success),
+              .setStyle(ButtonStyle.Success)
           );
           let str = "";
           if (categories.length < 1) str = "No categories found";
@@ -125,6 +125,7 @@ module.exports = {
                 });
               }
               if (i.customId === "remove") {
+                console.log("'Remove' pressed");
               }
             } catch (error) {
               console.error(error);
@@ -153,7 +154,7 @@ module.exports = {
             await interaction.editReply({ embeds: [list] });
           } else if (args.value.toLowerCase() === "ingredients") {
             const categories: string[] = await getIngredientsCategory(
-              guild.lang,
+              guild.lang
             );
 
             let str = "";

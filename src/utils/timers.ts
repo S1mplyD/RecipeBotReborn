@@ -12,16 +12,15 @@ import constants from "./constants";
 const hourMultiplier = 1000 * 60 * 60;
 import { getRandomRecipe } from "../database/querys/recipe";
 import { updateTimer } from "../database/querys/timers";
-import { time } from "console";
 
-var intervals: Array<Interval> = [];
+let intervals: Array<Interval> = [];
 
 export async function startAllTimer(client: CustomClient) {
   console.log("[STARTING TIMERS...]");
   const timers: TimerType[] | null = await getAllTimers();
   if (!timers) console.error("no timers");
   if (Array.isArray(timers)) {
-    for (let timer of timers) {
+    for (const timer of timers) {
       if (timer.time < 1 * hourMultiplier || timer.time > 24 * hourMultiplier) {
         timer.time = 1 * hourMultiplier;
         await updateTimer(timer, timer.time);
@@ -46,7 +45,7 @@ export async function startTimer(
       newTimer = await getTimerByGuildId(timer.guildId);
     }
     const now = new Date();
-    let timeLeft = newTimer
+    const timeLeft = newTimer
       ? newTimer!.time - (now.getTime() - newTimer!.startedAt.getTime())
       : timer.time - (now.getTime() - timer.startedAt.getTime());
     if (timeLeft < 0) {
@@ -81,7 +80,9 @@ export async function startTimer(
             };
 
             recipeEmbed.addFields(field);
-          } catch {}
+          } catch {
+            console.log("no featuredDataString");
+          }
           await updateStartTimer(timer);
           await channel.send({ embeds: [recipeEmbed] });
           await stopTimer(timer);
@@ -125,7 +126,9 @@ export async function startTimer(
               };
 
               recipeEmbed.addFields(field);
-            } catch {}
+            } catch {
+              console.log("no featuredDataString");
+            }
             await updateStartTimer(timer);
             await channel.send({ embeds: [recipeEmbed] });
             await stopTimer(timer);

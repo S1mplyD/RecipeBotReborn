@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import { REST, Routes } from "discord.js";
 import fs from "fs";
 import { config } from "dotenv";

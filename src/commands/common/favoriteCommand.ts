@@ -6,7 +6,7 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 import { CommandInteraction } from "discord.js";
-import { GuildType, RecipeType, UserType } from "../../utils/types";
+import { RecipeType, UserType } from "../../utils/types";
 import {
   createUser,
   getAllUserFavourites,
@@ -18,7 +18,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName("favorite")
     .setDescription("Add a recipe to favorites"),
-  async execute(interaction: CommandInteraction, guild: GuildType) {
+  async execute(interaction: CommandInteraction) {
     const user: UserType | Error = await getUser(interaction.user.id);
     if (user instanceof Error) {
       await createUser(interaction.user.id);
@@ -29,7 +29,7 @@ module.exports = {
       interaction.reply("You have no favorite recipes");
     else {
       let page: number = 0;
-      let chunk: number[] = [];
+      const chunk: number[] = [];
       for (let i = 0; i < recipes.length; i += 5) {
         chunk.push(Math.min(5, recipes.length - i));
       }
@@ -50,7 +50,7 @@ module.exports = {
       );
 
       const embedMessage = async (page: number) => {
-        let embeds: EmbedBuilder[] = [];
+        const embeds: EmbedBuilder[] = [];
         for (let i = 0; i < chunk[page]; i++) {
           const recipeEmbed = new EmbedBuilder()
             .setTitle(recipes[i + page * 5].name)
@@ -120,8 +120,6 @@ module.exports = {
               embeds: await embedMessage(page),
               components: [row],
             });
-          }
-          if (i.customId === "remove") {
           }
         } catch (error) {
           console.error(error);

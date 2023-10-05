@@ -3,8 +3,7 @@ import {
   ButtonBuilder,
   ButtonStyle,
   CommandInteraction,
-  EmbedBuilder,
-  ReactionUserManager,
+  EmbedBuilder
 } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, RecipeType, UserType } from "../../utils/types";
@@ -32,7 +31,7 @@ module.exports = {
     ),
 
   async execute(interaction: CommandInteraction, guild: GuildType) {
-    let lang: string | Error = await getGuildLang(guild.guildId);
+    const lang: string | Error = await getGuildLang(guild.guildId);
     if (lang instanceof Error) return lang;
 
     const languagePack = loadLanguage(lang);
@@ -72,7 +71,9 @@ module.exports = {
             };
 
             recipeEmbed.addFields(field);
-          } catch {}
+          } catch {
+            console.log("no featuredDataString");
+          }
           recipeEmbed
             .setURL(recipe.url)
             .setTimestamp()
@@ -119,7 +120,7 @@ module.exports = {
           }
         }
       } else {
-        let recipeName = args?.value as string;
+        const recipeName = args?.value as string;
         console.log("Recipe Name:", recipeName);
         const recipe = await getRecipeName(recipeName, guild.lang);
         console.log(recipe);
