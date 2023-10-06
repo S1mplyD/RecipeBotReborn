@@ -78,12 +78,12 @@ export class CustomClient extends Client {
         }
       } else if (interaction.isButton()) {
 
-        const guild = await getGuildByGuildId(interaction.guildId!);
+        // const guild = await getGuildByGuildId(interaction.guildId!);
 
         try {
           await handleButtonInteraction(
             interaction as ButtonInteraction,
-            guild as GuildType
+            // guild as GuildType
           );
         } catch (error) {
           console.error("caught error: ", error);

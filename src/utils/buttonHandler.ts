@@ -1,5 +1,5 @@
 import { ButtonInteraction } from "discord.js";
-import { GuildType, RecipeType, UserType } from "./types";
+import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
   createUser,
@@ -10,7 +10,7 @@ import { getRecipeById } from "../database/querys/recipe";
 
 export async function handleButtonInteraction(
   interaction: ButtonInteraction,
-  guild: GuildType
+  // guild: GuildType
 ) {
   const buttonId = interaction.customId.split(":");
   console.log(
