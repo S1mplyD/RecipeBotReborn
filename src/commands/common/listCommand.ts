@@ -44,13 +44,13 @@ module.exports = {
           const totalPages = chunk.length > 0 ? chunk.length - 1 : 0;
           const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
-              .setCustomId("backwards")
+              .setCustomId("category_list_backwards")
               .setEmoji("◀️")
               .setStyle(ButtonStyle.Secondary),
             new ButtonBuilder()
-              .setCustomId("forward")
+              .setCustomId("category_list_forward")
               .setEmoji("▶️")
-              .setStyle(ButtonStyle.Success)
+              .setStyle(ButtonStyle.Secondary)
           );
           let str = "";
           if (categories.length < 1) str = "No categories found";
@@ -75,8 +75,8 @@ module.exports = {
             components: [row],
           });
           const filter = (i) =>
-            (i.customId === "forward" ||
-              i.customId === "backwards" ||
+            (i.customId === "category_list_forward" ||
+              i.customId === "category_list_backwards" ||
               i.customId === "remove") &&
             i.user.id === interaction.user.id;
 
@@ -88,7 +88,7 @@ module.exports = {
 
           collector.on("collect", async (i) => {
             try {
-              if (i.customId === "forward") {
+              if (i.customId === "category_list_forward") {
                 page++;
                 if (page === 0) {
                   row.components[0].setDisabled(true);
@@ -106,7 +106,7 @@ module.exports = {
                   components: [row],
                 });
               }
-              if (i.customId === "backwards") {
+              if (i.customId === "category_list_backwards") {
                 page--;
                 if (page === 0) {
                   row.components[0].setDisabled(true);
