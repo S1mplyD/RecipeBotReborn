@@ -3,3 +3,27 @@
 
 npx eslint . --ext .ts --fix. #Checking code quality based on eslint rules
 
+
+# Check for TODOs comments (//TODO, //todo)
+
+TODOS_FOUND=$(grep -i -rn \
+    --exclude-dir=node_modules \
+    --exclude-dir=dist \
+    --exclude-dir=.husky \
+    --exclude-dir=.github \
+    --exclude="*.log" \
+    --exclude="*.md" \
+    --exclude=".env" \
+    '// *TODO' . || true)
+
+if [ -n "$TODOS_FOUND" ]; then
+    echo "Unresolved TODOs"
+    printf " -------------------------------------------------------------------------------------------------------- \n"
+    while IFS= read -r line; do
+        file_path=$(echo "$line" | cut -d':' -f1)
+        line_number=$(echo "$line" | cut -d':' -f2)
+        printf "%s\n" "$line"
+    done <<< "$TODOS_FOUND"
+    printf " -------------------------------------------------------------------------------------------------------- \n"
+    exit 1
+fi
