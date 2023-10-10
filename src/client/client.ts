@@ -25,6 +25,7 @@ export class CustomClient extends Client {
     this.on("interactionCreate", async (interaction: Interaction) => {
       if (interaction.isCommand()) {
         const command = this.commands.get(interaction.commandName);
+        console.log("command: ",command.data.name );
 
         if (!command) {
           console.error(
