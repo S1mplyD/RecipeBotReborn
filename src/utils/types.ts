@@ -6,6 +6,7 @@ export type GuildType = {
   lang: string;
   recipe_lang: string;
   premium: boolean;
+  statsId: string;
 };
 
 export type RecipeType = {
@@ -40,4 +41,10 @@ export type Interval = {
   interval: NodeJS.Timeout;
   channelId: string;
   guildId: string;
+};
+
+export type statsType = {
+  _id: string;
+  addDate: string;
+  removeDate: string;
 };
