@@ -24,12 +24,14 @@ export async function getAllGuilds() {
 export async function createGuild(
   guildId: string,
   name: string,
-  memberCount: number
+  memberCount: number,
+  statsId: string
 ) {
   const newGuild: GuildType | null = await guildSchema.create({
     guildId: guildId,
     name: name,
     memberCount: memberCount,
+    statsId: statsId,
   });
   if (!newGuild) return new Error("Cannot Create");
   else return newGuild;

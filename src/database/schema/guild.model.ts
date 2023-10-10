@@ -8,6 +8,7 @@ interface Guild {
   lang: string;
   recipe_lang: string;
   premium: boolean;
+  statsId: string;
 }
 
 interface GuildDocument extends Guild, Document {}
@@ -20,6 +21,7 @@ const guildSchema = new Schema<GuildDocument>({
   lang: { type: String, default: "en" },
   recipe_lang: { type: String, default: "en" },
   premium: { type: Boolean, required: true, default: false },
+  statsId: { type: String },
 });
 
 const guildModel = model<GuildDocument>("guildData", guildSchema);
