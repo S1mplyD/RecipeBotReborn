@@ -15,6 +15,7 @@ import {
   createGuildStats,
   updateRemoveGuildStat,
 } from "./database/querys/stats";
+import schedule from "node-schedule";
 
 config({ path: resolve(__dirname, "..", ".env") });
 
@@ -43,6 +44,13 @@ for (const folder of commandFolders) {
     }
   }
 }
+
+schedule.scheduleJob("0 0 * * *", () => {
+  console.log("create count file");
+}); // run everyday at midnight
+schedule.scheduleJob("30 * * * *", () => {
+  console.log("write server count");
+}); // run every 30 minutes
 
 client.once(Events.ClientReady, async (c) => {
   if (process.env.CLIENT_ID == "657369551121678346") {
@@ -117,7 +125,9 @@ client.on("guildDelete", async (guild) => {
       await updateRemoveGuildStat(guildDocument.statsId, removeDate);
     }
   } catch {
-    console.error(`Error when updating removeDate field for guild with ID: ${guild.id}`);
+    console.error(
+      `Error when updating removeDate field for guild with ID: ${guild.id}`
+    );
   }
   try {
     await guildModel.findOneAndDelete({ guildId: guild.id });
