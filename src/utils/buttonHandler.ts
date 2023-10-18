@@ -62,21 +62,6 @@ export async function handleButtonInteraction(
         ephemeral: true,
       });
     }
-  } else if (
-    buttonId[0] === "category_list_forward" ||
-    buttonId[0] === "category_list_backwards"
-  ) {
-    await setTimeout(2500);
-    try {
-      await interaction.reply({
-        content: "Interaction has expired, use **/list** command again",
-        ephemeral: true,
-      });
-      await setTimeout(10000);
-      interaction.deleteReply();
-    } catch {
-      console.log(`${buttonId[0]} was pressed`);
-    }
   } else {
     await setTimeout(2500);
     try {
