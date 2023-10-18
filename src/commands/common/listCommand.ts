@@ -1,10 +1,4 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  CommandInteraction,
-  EmbedBuilder,
-} from "discord.js";
+import { CommandInteraction, EmbedBuilder } from "discord.js";
 import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType } from "../../utils/types";
 import constants from "../../utils/constants";
@@ -36,100 +30,45 @@ module.exports = {
       if (!args) {
         const categories: string[] | undefined = await cleaned(guild.lang);
         if (categories) {
-          let page: number = 0;
-          const chunk: number[] = [];
-          for (let i = 0; i < categories.length; i += 50) {
-            chunk.push(Math.min(50, categories.length - i));
-          }
-          const totalPages = chunk.length > 0 ? chunk.length - 1 : 0;
-          const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder()
-              .setCustomId("category_list_backwards")
-              .setEmoji("◀️")
-              .setStyle(ButtonStyle.Secondary),
-            new ButtonBuilder()
-              .setCustomId("category_list_forward")
-              .setEmoji("▶️")
-              .setStyle(ButtonStyle.Secondary)
-          );
-          let str = "";
-          if (categories.length < 1) str = "No categories found";
-          const embedMessage = async (page: number) => {
-            for (let i = 0; i < chunk[page]; i++) {
-              str += `${i + page * 50 + 1}) ${categories[i + page * 50]}\n`;
-            }
+          const embedMessage = async () => {
             const list = new EmbedBuilder()
               .setTitle(languagePack.code.categoryList.title)
-              .setColor(constants.message.color)
-              .setDescription(str);
+              .setColor(constants.message.color);
+            let str = " ";
+            if (categories.length < 1) str = "No categories found";
+            else {
+              let firstLetter = categories[0] ? categories[0].charAt(0) : "";
+              let currentFirstLetter = firstLetter;
+
+              for (let i = 0; i <= categories.length; i++) {
+                if (categories[i]) {
+                  currentFirstLetter = categories[i].charAt(0);
+                  if (currentFirstLetter == firstLetter) {
+                    str += `${categories[i]}\n`;
+                  } else if (currentFirstLetter != firstLetter) {
+                    list.addFields({
+                      name: firstLetter,
+                      value: str,
+                      inline: false,
+                    });
+                    str = `${categories[i]}\n`;
+                  }
+                  firstLetter = categories[i].charAt(0);
+                } else if (i == categories.length) {
+                  list.addFields({
+                    name: firstLetter,
+                    value: str,
+                    inline: false,
+                  });
+                }
+              }
+            }
+
             str = "";
             return list;
           };
-          row.components[0].setDisabled(true);
-          if (page === totalPages) {
-            row.components[1].setDisabled(true);
-          }
-
           await interaction.reply({
-            embeds: [await embedMessage(page)],
-            components: [row],
-          });
-          const filter = (i) =>
-            (i.customId === "category_list_forward" ||
-              i.customId === "category_list_backwards" ||
-              i.customId === "remove") &&
-            i.user.id === interaction.user.id;
-
-          const collector =
-            interaction.channel!.createMessageComponentCollector({
-              filter,
-              time: 180000,
-            });
-
-          collector.on("collect", async (i) => {
-            try {
-              if (i.customId === "category_list_forward") {
-                page++;
-                if (page === 0) {
-                  row.components[0].setDisabled(true);
-                  row.components[1].setDisabled(false);
-                } else if (page === totalPages) {
-                  row.components[0].setDisabled(false);
-                  row.components[1].setDisabled(true);
-                } else {
-                  row.components[0].setDisabled(false);
-                  row.components[1].setDisabled(false);
-                }
-                await i.deferUpdate();
-                await interaction.editReply({
-                  embeds: [await embedMessage(page)],
-                  components: [row],
-                });
-              }
-              if (i.customId === "category_list_backwards") {
-                page--;
-                if (page === 0) {
-                  row.components[0].setDisabled(true);
-                  row.components[1].setDisabled(false);
-                } else if (page === totalPages) {
-                  row.components[0].setDisabled(false);
-                  row.components[1].setDisabled(true);
-                } else {
-                  row.components[0].setDisabled(false);
-                  row.components[1].setDisabled(false);
-                }
-                await i.deferUpdate();
-                await interaction.editReply({
-                  embeds: [await embedMessage(page)],
-                  components: [row],
-                });
-              }
-              if (i.customId === "remove") {
-                console.log("'Remove' pressed");
-              }
-            } catch (error) {
-              console.error(error);
-            }
+            embeds: [await embedMessage()],
           });
         }
       } else {
