@@ -1,4 +1,9 @@
-import { ButtonInteraction } from "discord.js";
+import {
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonInteraction,
+  ButtonStyle,
+} from "discord.js";
 import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
@@ -8,6 +13,21 @@ import {
 } from "../database/querys/user";
 import { getRecipeById } from "../database/querys/recipe";
 import { setTimeout } from "timers/promises";
+
+import { config } from "dotenv";
+import { resolve } from "path";
+config({ path: resolve(__dirname, "../..", ".env") });
+
+import { VoteClient, VoteClientEvents } from "topgg-votes";
+const topGGToken = process.env.TOPGG_TOKEN || "";
+const votesClient = new VoteClient({
+  token: topGGToken,
+});
+
+// Event for vote notifications
+votesClient.on(VoteClientEvents.BotVote, ({ userId }) => {
+  console.log(`${userId} has voted!`);
+});
 
 export async function handleButtonInteraction(
   interaction: ButtonInteraction
@@ -26,15 +46,40 @@ export async function handleButtonInteraction(
       await interaction.reply("Recipe not found.");
       return;
     }
-    const addRecipe = await addRecipeToUserFavorite(
-      interaction.user.id,
-      recipe.url
-    );
-    if (addRecipe instanceof Error) {
-      interaction.reply({ content: addRecipe.message, ephemeral: true });
-    } else {
+
+    const voted = true; // TODO: REMOVE BOOL
+    // await votesClient.hasVoted(interaction.user.id);
+
+    if (voted) {
+      console.log("User has voted!");
+
+      const addRecipe = await addRecipeToUserFavorite(
+        interaction.user.id,
+        recipe.url
+      );
+      if (addRecipe instanceof Error) {
+        interaction.reply({ content: addRecipe.message, ephemeral: true });
+      } else {
+        interaction.reply({
+          content: `Recipe **${recipe.name}** added to favorites`,
+          ephemeral: true,
+        });
+      }
+    }
+
+    if (!voted) {
+      console.log("User has not voted!");
+
+      const content = "You haven't voted the bot yet!\nUse the **/vote** command or click the button below to get the vote link";
+      const vote_bot = new ButtonBuilder()
+        .setCustomId("vote_bot")
+        .setLabel("Vote")
+        .setStyle(ButtonStyle.Success);
+
+      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(vote_bot);
       interaction.reply({
-        content: `Recipe **${recipe.name}** added to favorites`,
+        content: content,
+        components: [row],
         ephemeral: true,
       });
     }
@@ -62,6 +107,11 @@ export async function handleButtonInteraction(
         ephemeral: true,
       });
     }
+  } else if (buttonId[0] === "vote_bot") {
+    await interaction.reply({
+      content: "https://top.gg/bot/657369551121678346",
+      ephemeral: true,
+    });
   } else {
     await setTimeout(2500);
     try {
@@ -70,7 +120,7 @@ export async function handleButtonInteraction(
         ephemeral: true,
       });
     } catch {
-      console.log("interaction already replied");
+      console.log("button interaction successfully replied");
     }
   }
 }
