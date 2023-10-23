@@ -69,6 +69,7 @@ module.exports = {
           };
           await interaction.reply({
             embeds: [await embedMessage()],
+            ephemeral: true
           });
         }
       } else {
