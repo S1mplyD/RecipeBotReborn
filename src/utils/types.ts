@@ -33,7 +33,7 @@ export type TimerType = {
 
 export type UserType = {
   userId: string;
-  favoriteRecipes: string[];
+  favoriteRecipes: { url: string; date: Date }[];
 };
 
 export type Interval = {
