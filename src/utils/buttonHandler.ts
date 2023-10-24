@@ -70,7 +70,8 @@ export async function handleButtonInteraction(
     if (!voted) {
       console.log("User has not voted!");
 
-      const content = "You haven't voted the bot yet!\nUse the **/vote** command or click the button below to get the vote link";
+      const content =
+        "You haven't voted the bot yet!\nUse the **/vote** command or click the button below to get the vote link";
       const vote_bot = new ButtonBuilder()
         .setCustomId("vote_bot")
         .setLabel("Vote")
@@ -110,6 +111,11 @@ export async function handleButtonInteraction(
   } else if (buttonId[0] === "vote_bot") {
     await interaction.reply({
       content: "https://top.gg/bot/657369551121678346",
+      ephemeral: true,
+    });
+  } else if (buttonId[0] === "favorite_remove") {
+    await interaction.reply({
+      content: "Favorite remove button clicked",
       ephemeral: true,
     });
   } else {
