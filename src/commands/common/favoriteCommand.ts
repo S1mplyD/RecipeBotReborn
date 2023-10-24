@@ -23,9 +23,10 @@ module.exports = {
     if (user instanceof Error) {
       await createUser(interaction.user.id);
     }
-    const recipes: RecipeType[] | Error | undefined = await getAllUserFavorites(
-      interaction.user.id
-    );
+    const recipes:
+      | Error
+      | { recipe: RecipeType | undefined; date: Date }[]
+      | undefined = await getAllUserFavorites(interaction.user.id);
     if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
       interaction.reply("You have no favorite recipes");
     else {
@@ -56,29 +57,37 @@ module.exports = {
           let description: string;
           const currentRecipe = recipes[i + page * 5];
 
-          if (currentRecipe.desc.length > 100) {
-            const lastSpaceIndex = currentRecipe.desc.lastIndexOf(" ", 100);
-            if (lastSpaceIndex !== -1) {
-              description = `${currentRecipe.desc.substring(
-                0,
-                lastSpaceIndex
-              )}...`;
+          if (currentRecipe.recipe) {
+            if (currentRecipe.recipe.desc.length > 100) {
+              const lastSpaceIndex = currentRecipe.recipe.desc.lastIndexOf(
+                " ",
+                100
+              );
+              if (lastSpaceIndex !== -1) {
+                description = `${currentRecipe.recipe.desc.substring(
+                  0,
+                  lastSpaceIndex
+                )}...`;
+              } else {
+                description = `${currentRecipe.recipe.desc.substring(
+                  0,
+                  100
+                )}...`;
+              }
             } else {
-              description = `${currentRecipe.desc.substring(0, 100)}...`;
+              description = currentRecipe.recipe.desc;
             }
-          } else {
-            description = currentRecipe.desc;
+            const recipeEmbed = new EmbedBuilder()
+              .setTitle(currentRecipe.recipe.name)
+              .setColor(constants.message.color)
+              .setDescription(description)
+              .setURL(currentRecipe.recipe.url)
+              .setTimestamp(currentRecipe.date);
+            if (currentRecipe.recipe.img !== "") {
+              recipeEmbed.setThumbnail(currentRecipe.recipe.img);
+            }
+            embeds.push(recipeEmbed);
           }
-
-          const recipeEmbed = new EmbedBuilder()
-            .setTitle(currentRecipe.name)
-            .setColor(constants.message.color)
-            .setDescription(description)
-            .setURL(currentRecipe.url);
-          if (currentRecipe.img !== "") {
-            recipeEmbed.setThumbnail(currentRecipe.img);
-          }
-          embeds.push(recipeEmbed);
         }
         return embeds;
       };
