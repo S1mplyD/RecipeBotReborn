@@ -38,15 +38,15 @@ module.exports = {
       const totalPages = chunk.length > 0 ? chunk.length - 1 : 0;
       const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
         new ButtonBuilder()
-          .setCustomId("backwards")
+          .setCustomId("favorite_backwards")
           .setEmoji("◀️")
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId("forward")
+          .setCustomId("favorite_forward")
           .setEmoji("▶️")
           .setStyle(ButtonStyle.Secondary),
         new ButtonBuilder()
-          .setCustomId("remove")
+          .setCustomId("favorite_remove")
           .setEmoji("❌")
           .setStyle(ButtonStyle.Secondary)
       );
@@ -102,9 +102,9 @@ module.exports = {
         ephemeral: true,
       });
       const filter = (i) =>
-        (i.customId === "forward" ||
-          i.customId === "backwards" ||
-          i.customId === "remove") &&
+        (i.customId === "favorite_forward" ||
+          i.customId === "favorite_backwards" ||
+          i.customId === "favorite_remove") &&
         i.user.id === interaction.user.id;
 
       const collector = interaction.channel!.createMessageComponentCollector({
@@ -114,7 +114,7 @@ module.exports = {
 
       collector.on("collect", async (i) => {
         try {
-          if (i.customId === "forward") {
+          if (i.customId === "favorite_forward") {
             // page = (page % totalPages) + 1; // wrap around if exceeding last page
             page++; // should move 1 page
             if (page === 0) {
@@ -133,7 +133,7 @@ module.exports = {
               components: [row],
             });
           }
-          if (i.customId === "backwards") {
+          if (i.customId === "favorite_backwards") {
             page--;
             if (page === 0) {
               row.components[0].setDisabled(true);
