@@ -1,10 +1,11 @@
-import { ButtonInteraction } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
 import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
   createUser,
   getUser,
   removeRecipeFromFavorite,
+  getAllUserFavorites,
 } from "../database/querys/user";
 import { getRecipeById } from "../database/querys/recipe";
 import { setTimeout } from "timers/promises";
@@ -45,7 +46,6 @@ export async function handleButtonInteraction(
     const voted = await checkVoteAndAnswer(interaction.user.id);
 
     if (voted === true) {
-
       const addRecipe = await addRecipeToUserFavorite(
         interaction.user.id,
         recipe.url
@@ -94,10 +94,22 @@ export async function handleButtonInteraction(
       ephemeral: true,
     });
   } else if (buttonId[0] === "favorite_remove") {
-    await interaction.reply({
-      content: "Favorite remove button clicked",
-      ephemeral: true,
-    });
+    const recipes:
+      | Error
+      | { recipe: RecipeType | undefined; date: Date }[]
+      | undefined = await getAllUserFavorites(interaction.user.id);
+    if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
+      interaction.reply("You have no favorite recipes");
+    else {
+      
+      const actionRow = buttonList(recipes);
+      
+      await interaction.reply({
+        content: "Favorite remove button clicked",
+        ephemeral: true,
+        components: actionRow,
+      });
+    }
   } else {
     await setTimeout(2500);
     try {
@@ -127,4 +139,22 @@ async function checkVoteAndAnswer(user) {
 
     return content;
   }
+}
+
+
+function buttonList(recipes) {
+  const actionRow: ActionRowBuilder<ButtonBuilder>[] = [];
+  recipes.forEach((recipeData) => {
+    const actionButton = new ActionRowBuilder<ButtonBuilder>();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { recipe, date } = recipeData;
+    const button = new ButtonBuilder()
+      .setCustomId(recipe.url) 
+      .setLabel(recipe.name) 
+      .setStyle(ButtonStyle.Secondary); 
+    actionButton.addComponents(button);
+    actionRow.push(actionButton);
+  });
+
+  return actionRow;
 }
