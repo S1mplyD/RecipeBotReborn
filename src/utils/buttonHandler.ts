@@ -1,9 +1,4 @@
-import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonInteraction,
-  ButtonStyle,
-} from "discord.js";
+import { ButtonInteraction } from "discord.js";
 import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
@@ -47,11 +42,9 @@ export async function handleButtonInteraction(
       return;
     }
 
-    const voted = true; // TODO: REMOVE BOOL
-    // await votesClient.hasVoted(interaction.user.id);
+    const voted = await checkVoteAndAnswer(interaction.user.id);
 
-    if (voted) {
-      console.log("User has voted!");
+    if (voted === true) {
 
       const addRecipe = await addRecipeToUserFavorite(
         interaction.user.id,
@@ -65,22 +58,9 @@ export async function handleButtonInteraction(
           ephemeral: true,
         });
       }
-    }
-
-    if (!voted) {
-      console.log("User has not voted!");
-
-      const content =
-        "You haven't voted the bot yet!\nUse the **/vote** command or click the button below to get the vote link";
-      const vote_bot = new ButtonBuilder()
-        .setCustomId("vote_bot")
-        .setLabel("Vote")
-        .setStyle(ButtonStyle.Success);
-
-      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(vote_bot);
+    } else {
       interaction.reply({
-        content: content,
-        components: [row],
+        content: voted,
         ephemeral: true,
       });
     }
@@ -128,5 +108,23 @@ export async function handleButtonInteraction(
     } catch {
       console.log("button interaction successfully replied");
     }
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+async function checkVoteAndAnswer(user) {
+  const voted = false; // TODO: REMOVE BOOL
+  // await votesClient.hasVoted(interaction.user.id);
+
+  if (voted) {
+    console.log("User has voted!");
+    return true;
+  } else {
+    console.log("User has not voted!");
+
+    const content =
+      "Looks like you haven't voted the bot yet\n[Click here](https://top.gg/bot/657369551121678346/vote) to go to the voting page";
+
+    return content;
   }
 }
