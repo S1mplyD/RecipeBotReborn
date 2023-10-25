@@ -36,20 +36,30 @@ module.exports = {
         chunk.push(Math.min(5, recipes.length - i));
       }
       const totalPages = chunk.length > 0 ? chunk.length - 1 : 0;
-      const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-        new ButtonBuilder()
-          .setCustomId("favorite_backwards")
-          .setEmoji("◀️")
-          .setStyle(ButtonStyle.Secondary),
-        new ButtonBuilder()
-          .setCustomId("favorite_forward")
-          .setEmoji("▶️")
-          .setStyle(ButtonStyle.Secondary),
-        new ButtonBuilder()
-          .setCustomId("favorite_remove")
-          .setEmoji("❌")
-          .setStyle(ButtonStyle.Secondary)
-      );
+      let row;
+      if (chunk.length <= 1) {
+        row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
+            .setCustomId("favorite_remove")
+            .setEmoji("❌")
+            .setStyle(ButtonStyle.Secondary)
+        );
+      } else if (chunk.length > 1) {
+        row = new ActionRowBuilder<ButtonBuilder>().addComponents(
+          new ButtonBuilder()
+            .setCustomId("favorite_backwards")
+            .setEmoji("◀️")
+            .setStyle(ButtonStyle.Secondary),
+          new ButtonBuilder()
+            .setCustomId("favorite_forward")
+            .setEmoji("▶️")
+            .setStyle(ButtonStyle.Secondary),
+          new ButtonBuilder()
+            .setCustomId("favorite_remove")
+            .setEmoji("❌")
+            .setStyle(ButtonStyle.Secondary)
+        );
+      }
 
       const embedMessage = async (page: number) => {
         const embeds: EmbedBuilder[] = [];
@@ -91,9 +101,11 @@ module.exports = {
         }
         return embeds;
       };
-      row.components[0].setDisabled(true);
-      if (page === totalPages) {
-        row.components[1].setDisabled(true);
+      if (chunk.length > 1) {
+        row.components[0].setDisabled(true);
+        if (page === totalPages) {
+          row.components[1].setDisabled(true);
+        }
       }
 
       await interaction.reply({
@@ -101,6 +113,7 @@ module.exports = {
         components: [row],
         ephemeral: true,
       });
+
       const filter = (i) =>
         (i.customId === "favorite_forward" ||
           i.customId === "favorite_backwards" ||
