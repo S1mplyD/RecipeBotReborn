@@ -1,11 +1,10 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from "discord.js";
+import { ButtonInteraction } from "discord.js";
 import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
   createUser,
   getUser,
   removeRecipeFromFavorite,
-  getAllUserFavorites,
 } from "../database/querys/user";
 import { getRecipeById } from "../database/querys/recipe";
 import { setTimeout } from "timers/promises";
@@ -30,7 +29,14 @@ export async function handleButtonInteraction(
   // guild: GuildType
 ) {
   const buttonId = interaction.customId.split(":");
-  console.log("buttonId: ", buttonId[0], "\nbuttonValue: ", buttonId[1]);
+  console.log(
+    "buttonId: ",
+    buttonId[0],
+    "\nbuttonValue: ",
+    buttonId[1],
+    "\nbuttonParameter: ",
+    buttonId[2]
+  );
 
   const recipe: RecipeType | null = await getRecipeById(buttonId[1]);
   const user: UserType | Error = await getUser(interaction.user.id);
@@ -93,23 +99,6 @@ export async function handleButtonInteraction(
       content: "https://top.gg/bot/657369551121678346",
       ephemeral: true,
     });
-  } else if (buttonId[0] === "favorite_remove") {
-    const recipes:
-      | Error
-      | { recipe: RecipeType | undefined; date: Date }[]
-      | undefined = await getAllUserFavorites(interaction.user.id);
-    if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
-      interaction.reply("You have no favorite recipes");
-    else {
-      
-      const actionRow = buttonList(recipes);
-      
-      await interaction.reply({
-        content: "Favorite remove button clicked",
-        ephemeral: true,
-        components: actionRow,
-      });
-    }
   } else {
     await setTimeout(2500);
     try {
@@ -125,7 +114,7 @@ export async function handleButtonInteraction(
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 async function checkVoteAndAnswer(user) {
-  const voted = false; // TODO: REMOVE BOOL
+  const voted = true; // TODO: REMOVE BOOL
   // await votesClient.hasVoted(interaction.user.id);
 
   if (voted) {
@@ -139,22 +128,4 @@ async function checkVoteAndAnswer(user) {
 
     return content;
   }
-}
-
-
-function buttonList(recipes) {
-  const actionRow: ActionRowBuilder<ButtonBuilder>[] = [];
-  recipes.forEach((recipeData) => {
-    const actionButton = new ActionRowBuilder<ButtonBuilder>();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { recipe, date } = recipeData;
-    const button = new ButtonBuilder()
-      .setCustomId(recipe.url) 
-      .setLabel(recipe.name) 
-      .setStyle(ButtonStyle.Secondary); 
-    actionButton.addComponents(button);
-    actionRow.push(actionButton);
-  });
-
-  return actionRow;
 }
