@@ -5,8 +5,8 @@ import {
   ButtonStyle,
   EmbedBuilder,
   SlashCommandBuilder,
+  CommandInteraction,
 } from "discord.js";
-import { CommandInteraction } from "discord.js";
 import { RecipeType, UserType } from "../../utils/types";
 import {
   createUser,
@@ -138,6 +138,36 @@ module.exports = {
             ephemeral: true,
           });
         }
+      } else if(!remove){
+        const embedMessage = async () => {
+          const embed = new EmbedBuilder();
+          let body: string = "";
+          for (let i = 0; i < recipes.length; i++) {
+            const currentRecipe = recipes[i];
+
+            if (currentRecipe.recipe) {
+              const date =
+                currentRecipe.date.toLocaleDateString() +
+                "  " +
+                currentRecipe.date
+                  .toLocaleTimeString()
+                  .replace(/(.*)\D\d+/, "$1");
+              body += `- [${currentRecipe.recipe.name}](${currentRecipe.recipe.url}) ∙ ${date}\n`;
+            }
+          }
+          embed
+            .setTitle("Favorites")
+            .setColor(constants.message.color)
+            .setDescription(body);
+
+          return embed;
+        };
+        const embed = await embedMessage();
+        await interaction.reply({
+          embeds: [embed],
+          // components: [row],
+          ephemeral: true,
+        });
       } else {
         let page: number = 0;
         const chunk: number[] = [];
@@ -281,18 +311,3 @@ module.exports = {
     }
   },
 };
-// import { SlashCommandBuilder } from "discord.js";
-// import { CommandInteraction } from "discord.js";
-
-// module.exports = {
-//   data: new SlashCommandBuilder()
-//     .setDMPermission(false) // Command will not work in dm
-//     .setName("favorite")
-//     .setDescription("Manage favorites"),
-//   async execute(interaction: CommandInteraction) {
-//     await interaction.reply({
-//       content: "Coming soon!" /*"https://t.me/Recipe20Bot"*/,
-//       ephemeral: true,
-//     });
-//   },
-// };
