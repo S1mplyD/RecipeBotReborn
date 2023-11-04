@@ -86,6 +86,7 @@ export default <LanguageTranscription>{
 
   categoryList: {
     title: "**Lista delle categorie di ricette:**",
+    notFound: "Nessuna categoria trovata",
   },
 
   timer: {

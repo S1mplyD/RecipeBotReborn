@@ -81,6 +81,7 @@ export interface LanguageTranscription {
 
   categoryList: {
     title: string;
+    notFound: string;
   };
 
   timer: {

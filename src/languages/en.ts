@@ -86,6 +86,7 @@ export default <LanguageTranscription>{
 
   categoryList: {
     title: "**Recipe categories list:**",
+    notFound: "No categories found",
   },
 
   timer: {
