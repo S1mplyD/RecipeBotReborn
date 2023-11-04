@@ -15,6 +15,7 @@ import {
   removeRecipeFromFavorite,
 } from "../../database/querys/user";
 import constants from "../../utils/constants";
+import { checkVoteAndAnswer } from "../../utils/checks";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -77,12 +78,24 @@ module.exports = {
     if (user instanceof Error) {
       await createUser(interaction.user.id);
     }
+
+    const voted = await checkVoteAndAnswer(interaction.user.id);
+
     const recipes:
       | Error
       | { recipe: RecipeType | undefined; date: Date }[]
       | undefined = await getAllUserFavorites(interaction.user.id);
 
-    if (recipes instanceof Error || recipes === undefined || recipes.length < 1)
+    if (voted != true) {
+      interaction.reply({
+        content: voted,
+        ephemeral: true,
+      });
+    } else if (
+      recipes instanceof Error ||
+      recipes === undefined ||
+      recipes.length < 1
+    )
       interaction.reply("You have no favorite recipes");
     else {
       const remove = interaction.options.get("remove");
@@ -138,7 +151,7 @@ module.exports = {
             ephemeral: true,
           });
         }
-      } else if(!remove){
+      } else if (!remove) {
         const embedMessage = async () => {
           const embed = new EmbedBuilder();
           let body: string = "";
