@@ -6,51 +6,51 @@ export default <LanguageTranscription>{
 
     help: {
       Name: "Mostra la lista dei comandi",
-      Value: "`help`",
+      Value: "`/help`",
     },
     randomRecipe: {
       Name: "Fornisce una ricetta casuale",
-      Value: "`recipe`",
+      Value: "`/recipe`",
     },
     specificRecipe: {
       Name: "Fornisce una ricetta specifica",
-      Value: "`recipe \"nome ricetta\" / \"nome categoria\"`",
+      Value: "`/recipe \"nome ricetta\" | \"nome categoria\"`",
     },
     listAvaiableLanguages: {
       Name: "Lista delle lingue disponibili",
-      Value: "`lang`",
+      Value: "`/lang`",
     },
     changeBotLanguage: {
       Name: "Cambia la lingua del bot",
-      Value: "`lang \"lingua\"`",
+      Value: "`/lang \"lingua\"`",
     },
     timer: {
       Name: "Aggiunge un timer per le ricette automatiche",
-      Value: "`timer \"on/off\" \"ore\" `",
+      Value: "`/timer \"ore\" | \"on/off\"`",
     },
     categoryList: {
       Name: "Mostra le categorie di ricette disponibili",
-      Value: "`list`",
+      Value: "`/list`",
     },
-    // showFavoriteList: {
-    //   Name: "Mostra la tua lista dei preferiti",
-    //   Value: "`favorite`",
-    // },
+    showFavoriteList: {
+      Name: "Mostra la tua lista dei preferiti",
+      Value: "`/favorite`",
+    },
     support: {
       Name: "Richiedi supporto",
-      Value: "`support`",
+      Value: "`/support`",
     },
     donate: {
       Name: "Fai una donazione agli sviluppatori",
-      Value: "`donate`",
+      Value: "`/donate`",
     },
     telegram: {
       Name: "Provami anche su Telegram",
-      Value: "`telegram`",
+      Value: "`/telegram`",
     },
     vote: {
       Name: "Vota il bot",
-      Value: "`vote`",
+      Value: "`/vote`",
     },
 
     footer: "Ricorda che le ricette sono diverse in base alla lingua",
