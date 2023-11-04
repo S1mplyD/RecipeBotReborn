@@ -3,7 +3,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType } from "../../utils/types";
 import constants from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
-import { checkPermissions } from "../../utils/checkPermissions";
+import { checkPermissions } from "../../utils/checks";
 import { cleaned } from "../../utils/listCleaner";
 import {
   getCuisineCategories,
@@ -69,7 +69,7 @@ module.exports = {
           };
           await interaction.reply({
             embeds: [await embedMessage()],
-            ephemeral: true
+            ephemeral: true,
           });
         }
       } else {
