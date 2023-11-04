@@ -42,9 +42,9 @@ module.exports = {
               .setColor(constants.message.color);
             let str = " ";
             if (categories.length < 1) {
-              str = `${languagePack.code.categoryList.notFound}`;
-              const error_support = new ButtonBuilder()
-                .setCustomId("error_support")
+              str = `${languagePack.code.categoryList.notFound}`;   //TODO: Move this code somewhere else?
+              const error_support = new ButtonBuilder()             //TODO: Add this response method to other command errors
+                .setCustomId("error_support")                       //TODO: Handle button interaction in buttonHandler
                 .setLabel("Contact support")
                 .setStyle(ButtonStyle.Success);
               const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
