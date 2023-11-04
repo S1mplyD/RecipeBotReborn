@@ -8,7 +8,7 @@ module.exports = {
     .setDescription("Vote our bot!"),
   async execute(interaction: CommandInteraction) {
     await interaction.reply({
-      content: "https://top.gg/bot/657369551121678346",
+      content: "[Vote the bot](https://top.gg/bot/657369551121678346/vote)",
       ephemeral: true,
     });
   },
