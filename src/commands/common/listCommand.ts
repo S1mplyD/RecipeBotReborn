@@ -42,7 +42,7 @@ module.exports = {
             if (categories.length < 1) {
               str = `${languagePack.code.categoryList.notFound}`;
               const row = supportButton();
-              interaction.reply({ content: str, components: [row] });
+              await interaction.reply({ content: str, components: [row] });
             } else {
               let firstLetter = categories[0] ? categories[0].charAt(0) : "";
               let currentFirstLetter = firstLetter;
@@ -80,7 +80,7 @@ module.exports = {
               ephemeral: true,
             });
           } catch {
-            console.log("Interaction already replied. An error occured");
+            console.log("Interaction already replied. An error occured?");
           }
         }
       }
