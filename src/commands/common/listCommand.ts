@@ -1,7 +1,4 @@
 import {
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
   CommandInteraction,
   EmbedBuilder,
 } from "discord.js";
@@ -11,6 +8,7 @@ import constants from "../../utils/constants";
 import loadLanguage from "../../utils/loadLanguage";
 import { checkPermissions } from "../../utils/checks";
 import { cleaned } from "../../utils/listCleaner";
+import { supportButton } from "../../utils/utilityButtons";
 // import {
 //   getCuisineCategories,
 //   getIngredientsCategory,
@@ -42,14 +40,8 @@ module.exports = {
               .setColor(constants.message.color);
             let str = " ";
             if (categories.length < 1) {
-              str = `${languagePack.code.categoryList.notFound}`;   //TODO: Move this code somewhere else?
-              const error_support = new ButtonBuilder()             //TODO: Add this response method to other command errors
-                .setCustomId("error_support")                       //TODO: Handle button interaction in buttonHandler
-                .setLabel("Contact support")
-                .setStyle(ButtonStyle.Success);
-              const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-                error_support
-              );
+              str = `${languagePack.code.categoryList.notFound}`;
+              const row = supportButton();
               interaction.reply({ content: str, components: [row] });
             } else {
               let firstLetter = categories[0] ? categories[0].charAt(0) : "";
