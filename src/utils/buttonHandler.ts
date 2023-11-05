@@ -39,13 +39,15 @@ export async function handleButtonInteraction(
     buttonId[2]
   );
 
+  const buttonName = buttonId[0];
+
   const recipe: RecipeType | null = await getRecipeById(buttonId[1]);
   const user: UserType | Error = await getUser(interaction.user.id);
 
   if (user instanceof Error) await createUser(interaction.user.id);
   const voted = await checkVoteAndAnswer(interaction.user.id);
 
-  if (buttonId[0] === "add_favorite_recipe") {
+  if (buttonName === "add_favorite_recipe") {
     if (voted === true) {
       if (!recipe) {
         await interaction.reply("Recipe not found.");
@@ -69,7 +71,7 @@ export async function handleButtonInteraction(
         ephemeral: true,
       });
     }
-  } else if (buttonId[0] === "remove_favorite_recipe") {
+  } else if (buttonName === "remove_favorite_recipe") {
     if (voted === true) {
       if (!recipe) {
         await interaction.reply("Recipe not found.");
@@ -100,9 +102,15 @@ export async function handleButtonInteraction(
         ephemeral: true,
       });
     }
-  } else if (buttonId[0] === "vote_bot") {
+  } else if (buttonName === "vote_bot") {
     await interaction.reply({
       content: "https://top.gg/bot/657369551121678346",
+      ephemeral: true,
+    });
+  } else if (buttonName === "error_support") {
+    await interaction.reply({
+      content:
+        "[Click here](https://discord.gg/PrGRP3w) to join the support server",
       ephemeral: true,
     });
   } else {
