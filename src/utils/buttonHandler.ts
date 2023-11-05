@@ -110,7 +110,7 @@ export async function handleButtonInteraction(
   } else if (buttonName === "error_support") {
     await interaction.reply({
       content:
-        "[Click here](https://discord.gg/PrGRP3w) to join the support server",
+        "[Click here](https://discord.gg/PrGRP3w) to join the support server.",
       ephemeral: true,
     });
   } else {
