@@ -81,22 +81,26 @@ export interface LanguageTranscription {
 
   categoryList: {
     title: string;
+    notFound: string;
   };
 
   timer: {
-    title?: string;
     empty: {
       name: string;
-      value?: string;
     };
     current: {
-      name: string;
-      valueOne?: string;
-      valueMany?: string;
+      current: string;
+      updated: string;
+      set: string;
+      interval: string;
+      valueOne: string;
+      valueMany: string;
+      status: string;
+      category: string;
     };
     invalid: {
       name: string;
-      value?: string;
+      value: string;
     };
     stopped: string;
     started: string;

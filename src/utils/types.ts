@@ -9,10 +9,13 @@ export type GuildType = {
 };
 
 export type RecipeType = {
+  _id: string;
   url: string;
   img: string;
   name: string;
   category: string;
+  cuisine: string;
+  ingredients: string[];
   desc: string;
   lang: string;
   featuredData: string[];
@@ -24,12 +27,13 @@ export type TimerType = {
   time: number;
   status: boolean;
   lang: string;
+  category: string;
   startedAt: Date;
 };
 
 export type UserType = {
   userId: string;
-  favoriteRecipes: string[];
+  favoriteRecipes: { url: string; date: Date }[];
 };
 
 export type Interval = {
