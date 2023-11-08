@@ -9,7 +9,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, RecipeType } from "../../utils/types";
 import constants from "../../utils/constants";
 import { getRandomRecipe, getRecipeName } from "../../database/querys/recipe";
-import { checkPermissions } from "../../utils/checkPermissions";
+import { checkPermissions } from "../../utils/checks";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
 

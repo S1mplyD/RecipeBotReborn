@@ -11,6 +11,7 @@ import {
 import { GuildType } from "../utils/types";
 import { getGuildByGuildId } from "../database/querys/guild";
 import { handleButtonInteraction } from "../utils/buttonHandler";
+import { supportButton } from "../utils/utilityButtons";
 
 export class CustomClient extends Client {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -47,11 +48,13 @@ export class CustomClient extends Client {
           if (interaction.replied || interaction.deferred) {
             await interaction.followUp({
               content: "There was an error while executing this command!",
+              components: [supportButton()],
               ephemeral: true,
             });
           } else {
             await interaction.reply({
               content: "There was an error while executing this command!",
+              components: [supportButton()],
               ephemeral: true,
             });
           }

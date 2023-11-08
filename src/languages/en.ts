@@ -6,51 +6,51 @@ export default <LanguageTranscription>{
 
     help: {
       Name: "Shows the Commands list",
-      Value: "`help`",
+      Value: "`/help`",
     },
     randomRecipe: {
       Name: "Get a random recipe",
-      Value: "`recipe`",
+      Value: "`/recipe`",
     },
     specificRecipe: {
       Name: "Get a specific recipe",
-      Value: "`recipe \"recipe name\" / \"category name\"`",
+      Value: "`/recipe \"recipe name\" | \"category name\"`",
     },
     listAvaiableLanguages: {
       Name: "Get the list of avaiable languages",
-      Value: "`lang`",
+      Value: "`/lang`",
     },
     changeBotLanguage: {
       Name: "Change bot language",
-      Value: "`lang \"language\"`",
+      Value: "`/lang \"language\"`",
     },
     timer: {
       Name: "Set an auto-recipe timer",
-      Value: "`timer \"on/off\" \"hours\" `",
+      Value: "`/timer \"on/off\" | \"hours\"`",
     },
     categoryList: {
       Name: "Shows the recipe categories list",
-      Value: "`list`",
+      Value: "`/list`",
     },
-    // showFavoriteList: {
-    //   Name: "Shows your favorites list",
-    //   Value: "`favorite`",
-    // },
+    showFavoriteList: {
+      Name: "Shows your favorites list",
+      Value: "`/favorite`",
+    },
     support: {
       Name: "Request support",
-      Value: "`support`",
+      Value: "`/support`",
     },
     donate: {
       Name: "Donate to developers",
-      Value: "`donate`",
+      Value: "`/donate`",
     },
     telegram: {
       Name: "Try me on Telegram",
-      Value: "`telegram`",
+      Value: "`/telegram`",
     },
     vote: {
       Name: "Vote the bot",
-      Value: "`vote`",
+      Value: "`/vote`",
     },
 
     footer: "Remember that recipes differ by language",
@@ -86,6 +86,7 @@ export default <LanguageTranscription>{
 
   categoryList: {
     title: "**Recipe categories list:**",
+    notFound: "No categories found",
   },
 
   timer: {

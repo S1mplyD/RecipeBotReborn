@@ -13,11 +13,10 @@ import {
   updateTimer,
 } from "../../database/querys/timers";
 import { client } from "../..";
-import { checkPermissions } from "../../utils/checkPermissions";
+import { checkPermissions } from "../../utils/checks";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
 import { cleaned } from "../../utils/listCleaner";
-
 
 const hourMultiplier = 1000 * 60 * 60;
 module.exports = {

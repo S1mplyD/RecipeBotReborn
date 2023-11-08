@@ -14,6 +14,7 @@ import { resolve } from "path";
 config({ path: resolve(__dirname, "../..", ".env") });
 
 import { VoteClient, VoteClientEvents } from "topgg-votes";
+import { checkVoteAndAnswer } from "./checks";
 const topGGToken = process.env.TOPGG_TOKEN || "";
 const votesClient = new VoteClient({
   token: topGGToken,
@@ -38,20 +39,20 @@ export async function handleButtonInteraction(
     buttonId[2]
   );
 
+  const buttonName = buttonId[0];
+
   const recipe: RecipeType | null = await getRecipeById(buttonId[1]);
   const user: UserType | Error = await getUser(interaction.user.id);
 
   if (user instanceof Error) await createUser(interaction.user.id);
+  const voted = await checkVoteAndAnswer(interaction.user.id);
 
-  if (buttonId[0] === "add_favorite_recipe") {
-    if (!recipe) {
-      await interaction.reply("Recipe not found.");
-      return;
-    }
-
-    const voted = await checkVoteAndAnswer(interaction.user.id);
-
+  if (buttonName === "add_favorite_recipe") {
     if (voted === true) {
+      if (!recipe) {
+        await interaction.reply("Recipe not found.");
+        return;
+      }
       const addRecipe = await addRecipeToUserFavorite(
         interaction.user.id,
         recipe.url
@@ -70,33 +71,46 @@ export async function handleButtonInteraction(
         ephemeral: true,
       });
     }
-  } else if (buttonId[0] === "remove_favorite_recipe") {
-    if (!recipe) {
-      await interaction.reply("Recipe not found.");
-      return;
-    }
-    try {
-      const removeRecipe = await removeRecipeFromFavorite(
-        interaction.user.id,
-        recipe.url
-      );
-      if (removeRecipe instanceof Error) {
-        interaction.reply({ content: removeRecipe.message, ephemeral: true });
-      } else {
+  } else if (buttonName === "remove_favorite_recipe") {
+    if (voted === true) {
+      if (!recipe) {
+        await interaction.reply("Recipe not found.");
+        return;
+      }
+      try {
+        const removeRecipe = await removeRecipeFromFavorite(
+          interaction.user.id,
+          recipe.url
+        );
+        if (removeRecipe instanceof Error) {
+          interaction.reply({ content: removeRecipe.message, ephemeral: true });
+        } else {
+          interaction.reply({
+            content: `Recipe **${recipe.name}** removed from favorites`,
+            ephemeral: true,
+          });
+        }
+      } catch {
         interaction.reply({
-          content: `Recipe **${recipe.name}** removed from favorites`,
+          content: `Recipe **${recipe.name}** is not in your favorites`,
           ephemeral: true,
         });
       }
-    } catch {
+    } else {
       interaction.reply({
-        content: `Recipe **${recipe.name}** is not in your favorites`,
+        content: voted,
         ephemeral: true,
       });
     }
-  } else if (buttonId[0] === "vote_bot") {
+  } else if (buttonName === "vote_bot") {
     await interaction.reply({
       content: "https://top.gg/bot/657369551121678346",
+      ephemeral: true,
+    });
+  } else if (buttonName === "error_support") {
+    await interaction.reply({
+      content:
+        "[Click here](https://discord.gg/PrGRP3w) to join the support server.",
       ephemeral: true,
     });
   } else {
@@ -109,23 +123,5 @@ export async function handleButtonInteraction(
     } catch {
       console.log("button interaction successfully replied");
     }
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-async function checkVoteAndAnswer(user) {
-  const voted = true; // TODO: REMOVE BOOL
-  // await votesClient.hasVoted(interaction.user.id);
-
-  if (voted) {
-    console.log("User has voted!");
-    return true;
-  } else {
-    console.log("User has not voted!");
-
-    const content =
-      "Looks like you haven't voted the bot yet\n[Click here](https://top.gg/bot/657369551121678346/vote) to go to the voting page";
-
-    return content;
   }
 }
