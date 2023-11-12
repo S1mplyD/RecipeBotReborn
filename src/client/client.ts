@@ -47,13 +47,13 @@ export class CustomClient extends Client {
           console.error("caught error: ", error);
           if (interaction.replied || interaction.deferred) {
             await interaction.followUp({
-              content: "There was an error while executing this command!",
+              content: "There was an error while executing this command.",
               components: [supportButton()],
               ephemeral: true,
             });
           } else {
             await interaction.reply({
-              content: "There was an error while executing this command!",
+              content: "There was an error while executing this command.",
               components: [supportButton()],
               ephemeral: true,
             });
