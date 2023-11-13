@@ -45,8 +45,7 @@ export async function getAllUserFavorites(userId: string) {
         };
       });
       return recipesWithDate;
-    }
-    else return new Error("no favorites recipes");
+    } else return new Error("no favorites recipes");
   }
 }
 
@@ -60,6 +59,28 @@ export async function isRecipeInUserFavorite(userId: string, url: string) {
   } else {
     return false;
   }
+}
+
+export async function countUserFavorites(userId: string) {
+  const user: UserType | null = await userModel.findOne({ userId: userId });
+  const favoriteUrlsDates = user?.favoriteRecipes.map((recipe) => ({
+    url: recipe.url,
+    date: recipe.date,
+  }));
+
+  if (!favoriteUrlsDates) {
+    throw new Error("favoriteUrlsDates is not defined");
+  }
+
+  if (favoriteUrlsDates.length === 0) {
+    throw new Error("no favorite recipes");
+  }
+
+  if (favoriteUrlsDates.length > 10) {
+    throw new Error("maximum recipes count reached");
+  }
+
+  return true;
 }
 
 export async function addRecipeToUserFavorite(userId: string, url: string) {
@@ -102,7 +123,7 @@ export async function removeRecipeFromFavorite(userId: string, url: string) {
     {
       $pull: {
         favoriteRecipes: {
-          url: url
+          url: url,
         },
       },
     }
