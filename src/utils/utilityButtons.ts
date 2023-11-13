@@ -6,13 +6,14 @@ import {
 } from "discord.js";
 
 export function supportButton() {
-  const error_support = new ButtonBuilder() //TODO: Add this response method to other command errors
-    .setCustomId("error_support") //TODO: Handle button interaction in buttonHandler
+  const error_support = new ButtonBuilder()
+    .setCustomId("error_support") 
     .setLabel("Contact support")
     .setStyle(ButtonStyle.Primary);
   const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
     error_support
   );
+  // Alternate error message using embed
   // const embed = new EmbedBuilder();
   // embed
   //   .setTitle("An error occured")
