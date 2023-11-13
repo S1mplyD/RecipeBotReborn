@@ -76,7 +76,7 @@ export async function countUserFavorites(userId: string) {
     throw new Error("no favorite recipes");
   }
 
-  if (favoriteUrlsDates.length > 10) {
+  if (favoriteUrlsDates.length >= 10) {
     throw new Error("maximum recipes count reached");
   }
 
