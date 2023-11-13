@@ -2,6 +2,7 @@ import { ButtonInteraction } from "discord.js";
 import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
+  countUserFavorites,
   createUser,
   getUser,
   removeRecipeFromFavorite,
@@ -53,17 +54,19 @@ export async function handleButtonInteraction(
         await interaction.reply("Recipe not found.");
         return;
       }
-      const addRecipe = await addRecipeToUserFavorite(
-        interaction.user.id,
-        recipe.url
-      );
-      if (addRecipe instanceof Error) {
-        interaction.reply({ content: addRecipe.message, ephemeral: true });
-      } else {
-        interaction.reply({
-          content: `Recipe **${recipe.name}** added to favorites`,
-          ephemeral: true,
-        });
+      if (await countUserFavorites(interaction.user.id)) {
+        const addRecipe = await addRecipeToUserFavorite(
+          interaction.user.id,
+          recipe.url
+        );
+        if (addRecipe instanceof Error) {
+          interaction.reply({ content: addRecipe.message, ephemeral: true });
+        } else {
+          interaction.reply({
+            content: `Recipe **${recipe.name}** added to favorites`,
+            ephemeral: true,
+          });
+        }
       }
     } else {
       interaction.reply({
