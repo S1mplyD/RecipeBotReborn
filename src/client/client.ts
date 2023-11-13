@@ -44,7 +44,7 @@ export class CustomClient extends Client {
             guild as GuildType
           );
         } catch (error) {
-          console.error("caught error: ", error);
+          console.error("caught command interaction error: ", error);
           if (interaction.replied || interaction.deferred) {
             await interaction.followUp({
               content: "There was an error while executing this command.",
@@ -77,7 +77,7 @@ export class CustomClient extends Client {
             guild as GuildType
           );
         } catch (error) {
-          console.error("caught error: ", error);
+          console.error("caught auto-complete interaction error: ", error);
         }
       } else if (interaction.isButton()) {
 
@@ -89,7 +89,7 @@ export class CustomClient extends Client {
             // guild as GuildType
           );
         } catch (error) {
-          console.error("caught error: ", error);
+          console.error("caught button interaction error: ", error);
         }
       } else return;
     });
