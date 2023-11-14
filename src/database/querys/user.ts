@@ -63,21 +63,21 @@ export async function isRecipeInUserFavorite(userId: string, url: string) {
 
 export async function countUserFavorites(userId: string) {
   const user: UserType | null = await userModel.findOne({ userId: userId });
+  if (!user) {
+    return new Error("User not found");
+  }
+  const userMaxFavoriteAmount = 10;
   const favoriteUrlsDates = user?.favoriteRecipes.map((recipe) => ({
     url: recipe.url,
     date: recipe.date,
   }));
 
   if (!favoriteUrlsDates) {
-    throw new Error("favoriteUrlsDates is not defined");
+    return new Error("favoriteUrlsDates is not defined");
   }
 
-  if (favoriteUrlsDates.length === 0) {
-    throw new Error("no favorite recipes");
-  }
-
-  if (favoriteUrlsDates.length >= 10) {
-    throw new Error("maximum recipes count reached");
+  if (favoriteUrlsDates.length >= userMaxFavoriteAmount) {
+    return `You have reached the maximum favorites amount. [${userMaxFavoriteAmount} recipes]`;
   }
 
   return true;
