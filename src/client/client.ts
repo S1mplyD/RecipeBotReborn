@@ -46,17 +46,9 @@ export class CustomClient extends Client {
         } catch (error) {
           console.error("caught command interaction error: ", error);
           if (interaction.replied || interaction.deferred) {
-            await interaction.followUp({
-              content: "There was an error while executing this command.",
-              components: [supportButton()],
-              ephemeral: true,
-            });
+            await interaction.followUp(supportButton(error));
           } else {
-            await interaction.reply({
-              content: "There was an error while executing this command.",
-              components: [supportButton()],
-              ephemeral: true,
-            });
+            await interaction.reply(supportButton(error));
           }
         }
       } else if (interaction.isAutocomplete()) {

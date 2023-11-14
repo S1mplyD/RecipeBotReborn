@@ -41,8 +41,7 @@ module.exports = {
             let str = " ";
             if (categories.length < 1) {
               str = `${languagePack.code.categoryList.notFound}`;
-              const row = supportButton();
-              await interaction.reply({ content: str, components: [row] });
+              await interaction.reply(supportButton(str));
             } else {
               let firstLetter = categories[0] ? categories[0].charAt(0) : "";
               let currentFirstLetter = firstLetter;
