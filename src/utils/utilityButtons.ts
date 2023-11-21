@@ -1,24 +1,27 @@
 import {
-  // EmbedBuilder,
+  EmbedBuilder,
   ActionRowBuilder,
   ButtonBuilder,
   ButtonStyle,
 } from "discord.js";
 
-export function supportButton() {
-  const error_support = new ButtonBuilder() //TODO: Add this response method to other command errors
-    .setCustomId("error_support") //TODO: Handle button interaction in buttonHandler
+export function supportButton(message) {
+  // Alternate error message using embed
+  console.log(`message: ${message}`);
+  const embed = new EmbedBuilder();
+  embed
+    .setTitle("An error has occured")
+    .setDescription(`\`\`\`${message}\`\`\``)
+    .setFooter({
+      text: "Button not working?\nhttps://discord.gg/PrGRP3w",
+    })
+    .setColor("#ff0303");
+  const invite_code = new ButtonBuilder()
     .setLabel("Contact support")
-    .setStyle(ButtonStyle.Primary);
-  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(
-    error_support
-  );
-  // const embed = new EmbedBuilder();
-  // embed
-  //   .setTitle("An error occured")
-  //   .setTimestamp(new Date())
-  //   .setURL("https://discord.gg/PrGRP3w")
-  //   .setDescription("An error has occured, please join the support server and report this.");
-  // const reply = {embeds: [embed], componets: [row]};
-  return row;
+    .setURL("https://discord.gg/PrGRP3w")
+    .setStyle(ButtonStyle.Link);
+  const row = new ActionRowBuilder<ButtonBuilder>().addComponents(invite_code);
+  const reply = { embeds: [embed], ephemeral: true, components: [row] };
+  return reply;
+  // return row;
 }

@@ -2,6 +2,7 @@ import { ButtonInteraction } from "discord.js";
 import { RecipeType, UserType } from "./types";
 import {
   addRecipeToUserFavorite,
+  countUserFavorites,
   createUser,
   getUser,
   removeRecipeFromFavorite,
@@ -15,6 +16,7 @@ config({ path: resolve(__dirname, "../..", ".env") });
 
 import { VoteClient, VoteClientEvents } from "topgg-votes";
 import { checkVoteAndAnswer } from "./checks";
+import { supportButton } from "./utilityButtons";
 const topGGToken = process.env.TOPGG_TOKEN || "";
 const votesClient = new VoteClient({
   token: topGGToken,
@@ -53,17 +55,26 @@ export async function handleButtonInteraction(
         await interaction.reply("Recipe not found.");
         return;
       }
-      const addRecipe = await addRecipeToUserFavorite(
-        interaction.user.id,
-        recipe.url
+      const countRecipes: true | string | Error = await countUserFavorites(
+        interaction.user.id
       );
-      if (addRecipe instanceof Error) {
-        interaction.reply({ content: addRecipe.message, ephemeral: true });
-      } else {
-        interaction.reply({
-          content: `Recipe **${recipe.name}** added to favorites`,
-          ephemeral: true,
-        });
+      if (countRecipes == true) {
+        const addRecipe = await addRecipeToUserFavorite(
+          interaction.user.id,
+          recipe.url
+        );
+        if (addRecipe instanceof Error) {
+          interaction.reply({ content: addRecipe.message, ephemeral: true });
+        } else {
+          interaction.reply({
+            content: `Recipe **${recipe.name}** added to favorites`,
+            ephemeral: true,
+          });
+        }
+      } else if (countRecipes instanceof Error) {
+        interaction.reply(supportButton(countRecipes.message));
+      } else if (typeof countRecipes === "string") {
+        interaction.reply({ content: countRecipes, ephemeral: true });
       }
     } else {
       interaction.reply({
@@ -105,12 +116,6 @@ export async function handleButtonInteraction(
   } else if (buttonName === "vote_bot") {
     await interaction.reply({
       content: "https://top.gg/bot/657369551121678346",
-      ephemeral: true,
-    });
-  } else if (buttonName === "error_support") {
-    await interaction.reply({
-      content:
-        "[Click here](https://discord.gg/PrGRP3w) to join the support server.",
       ephemeral: true,
     });
   } else {
