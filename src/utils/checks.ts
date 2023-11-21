@@ -2,6 +2,12 @@
 import { CommandInteraction } from "discord.js";
 import constants from "./constants";
 
+import { VoteClient } from "topgg-votes";
+const topGGToken = process.env.TOPGG_TOKEN || "";
+const votesClient = new VoteClient({
+  token: topGGToken,
+});
+
 export function checkPermissions(interaction: CommandInteraction) {
   if (interaction.guild?.members.me) {
     const permissions = interaction.guild?.members.me.permissionsIn(
@@ -29,11 +35,9 @@ export function checkPermissions(interaction: CommandInteraction) {
   return null;
 }
 
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function checkVoteAndAnswer(user) {
-  const voted = false; // TODO: REMOVE BOOL
-  // await votesClient.hasVoted(interaction.user.id);
+  const voted = await votesClient.hasVoted(user);
 
   if (voted) {
     console.log("User has voted!");

@@ -12,7 +12,7 @@ import {
   setTimerStatus,
   updateTimer,
 } from "../../database/querys/timers";
-import { client } from "../..";
+import { client } from "../../bot";
 import { checkPermissions } from "../../utils/checks";
 import loadLanguage from "../../utils/loadLanguage";
 import { getGuildLang } from "../../database/querys/guild";
