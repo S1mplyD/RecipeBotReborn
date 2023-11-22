@@ -37,8 +37,10 @@ export async function startTimer(
 ) {
   let interval: NodeJS.Timeout;
 
-  const channel = await client.channels.fetch(timer.channelId);
-  if (status === true) {
+  if (status === true && client.channels.cache.get(timer.channelId)) {
+    const channel = await client.channels.fetch(timer.channelId);
+    console.log(`channel: ${channel}`);
+    console.log("hello");
     let newTimer: TimerType | null = null;
     if (timer.startedAt === undefined) {
       await addStartTime(timer, new Date());
@@ -49,7 +51,11 @@ export async function startTimer(
       ? newTimer!.time - (now.getTime() - newTimer!.startedAt.getTime())
       : timer.time - (now.getTime() - timer.startedAt.getTime());
     if (timeLeft < 0) {
-      if (channel && channel.isTextBased()) {
+      if (
+        channel &&
+        channel.isTextBased() &&
+        client.channels.cache.get(timer.channelId)
+      ) {
         const recipe: RecipeType | null = timer.category
           ? await getRecipeName(timer.category, timer.lang)
           : await getRandomRecipe(timer.lang);
@@ -96,10 +102,14 @@ export async function startTimer(
           await setTimerStatus(newTimer!, true);
           await startTimer(newTimer!, client, true);
         }
-      }
+      } else stopTimer(timer);
     } else {
       interval = setInterval(async () => {
-        if (channel && channel.isTextBased()) {
+        if (
+          channel &&
+          channel.isTextBased() &&
+          client.channels.cache.get(timer.channelId)
+        ) {
           const recipe: RecipeType | null = timer.category
             ? await getRecipeName(timer.category, timer.lang)
             : await getRandomRecipe(timer.lang);
@@ -146,7 +156,7 @@ export async function startTimer(
             await setTimerStatus(newTimer!, true);
             await startTimer(newTimer!, client, true);
           }
-        }
+        } else stopTimer(timer);
       }, timeLeft as number);
       await setTimerInterval(interval, timer.channelId, timer.guildId);
     }
