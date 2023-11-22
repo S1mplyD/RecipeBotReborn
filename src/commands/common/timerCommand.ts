@@ -7,6 +7,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, TimerType } from "../../utils/types";
 import { startTimer, stopTimer } from "../../utils/timers";
 import {
+  changeTimerChannel,
   createTimer,
   getTimerByGuildId,
   setTimerStatus,
@@ -122,6 +123,14 @@ module.exports = {
       if (!timeArg) {
         const timer = await getTimerByGuildId(interaction.guildId!);
 
+        if (timer && !client.channels.cache.get(timer.channelId)) {
+          const newChannel = await changeTimerChannel(
+            interaction.channelId,
+            guild.guildId
+          );
+          if (newChannel) timer.channelId = newChannel;
+        }
+
         // If the guild already has a timer, check if user gave a vaid category, otherwise reply with timer info.
         if (timer) {
           if (foundCategory) {
@@ -213,6 +222,14 @@ module.exports = {
       } else {
         // Command has timeArg argument
         const timer = await getTimerByGuildId(interaction.guildId!);
+
+        if (timer && !client.channels.cache.get(timer.channelId)) {
+          const newChannel = await changeTimerChannel(
+            interaction.channelId,
+            guild.guildId
+          );
+          if (newChannel) timer.channelId = newChannel;
+        }
 
         if (typeof timeArg.value === "string") {
           const lowerCaseArgs = timeArg.value.toLowerCase();
