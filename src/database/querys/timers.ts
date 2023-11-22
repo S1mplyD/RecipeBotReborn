@@ -122,3 +122,12 @@ export async function updateStartTimer(timer: TimerType) {
   if (update.modifiedCount < 1) console.log("cannot update");
   else return null;
 }
+
+export async function changeTimerChannel(channelId: string, guildId: string) {
+  const update = await timerModel.updateOne(
+    { guildId: guildId },
+    { channelId: channelId }
+  );
+  if (update.modifiedCount < 1) console.log("cannot update");
+  else return channelId;
+}
