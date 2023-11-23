@@ -158,6 +158,14 @@ module.exports = {
 
                 // Start the updated timer
                 await stopTimer(timer);
+                const newChannel = await changeTimerChannel(
+                  interaction.channelId,
+                  guild.guildId
+                );
+                if (newChannel) {
+                  newTimer!.channelId = newChannel;
+                  timer.channelId = newChannel;
+                }
                 await setTimerStatus(newTimer!, true);
                 await startTimer(newTimer!, client, true);
                 if (timer) {
@@ -241,7 +249,7 @@ module.exports = {
 
             // And check if guild has a timer
             if (timer) {
-              await stopTimer(timer);
+              if (timer.status == true) await stopTimer(timer);
               await interaction.deferReply({ ephemeral: true });
               interaction.editReply({
                 content: lpcode.stopped, // Eg. "Timer stopped"
@@ -259,8 +267,20 @@ module.exports = {
 
             // And check if guild has a timer
             if (timer) {
-              await setTimerStatus(timer, true);
-              await startTimer(timer, client, true);
+              if (timer.status == false) {
+                await setTimerStatus(timer, true);
+
+                if (timer.channelId != interaction.channelId) {
+                  const newChannel = await changeTimerChannel(
+                    interaction.channelId,
+                    guild.guildId
+                  );
+                  if (newChannel) {
+                    timer.channelId = newChannel;
+                  }
+                }
+                await startTimer(timer, client, true);
+              }
               await interaction.deferReply({ ephemeral: true });
               await interaction.editReply({
                 content: lpcode.started, // Eg. "Timer started"
@@ -333,11 +353,19 @@ module.exports = {
                 });
               } else {
                 try {
-                  const updatedTimer = await updateTimer(
-                    timer,
-                    timeArg.value as unknown as number,
-                    foundCategory as unknown as string
-                  );
+                  let updatedTimer: string | null = null;
+
+                  if (
+                    timer.time != (timeArg.value as unknown as number) ||
+                    timer.category != (foundCategory as unknown as string)
+                  ) {
+                    updatedTimer = await updateTimer(
+                      timer,
+                      timeArg.value as unknown as number,
+                      foundCategory as unknown as string
+                    );
+                  }
+
                   if (updatedTimer) {
                     // Time (and possibly Category) update ERROR (input time was less than 1 or more than 24)
                     await interaction.deferReply({ ephemeral: true });
@@ -352,6 +380,16 @@ module.exports = {
 
                     // Start the updated timer
                     await stopTimer(timer);
+                    if (timer.channelId != interaction.channelId) {
+                      const newChannel = await changeTimerChannel(
+                        interaction.channelId,
+                        guild.guildId
+                      );
+                      if (newChannel) {
+                        newTimer!.channelId = newChannel;
+                        timer.channelId = newChannel;
+                      }
+                    }
                     await setTimerStatus(newTimer!, true);
                     await startTimer(newTimer!, client, true);
                     if (timer) {
