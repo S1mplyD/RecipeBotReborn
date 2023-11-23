@@ -172,7 +172,7 @@ module.exports = {
                     foundCategory && foundCategory !== ""
                       ? ` | ${lpcode.current.category} **${foundCategory}**`
                       : ""
-                  }`;
+                  } | in <#${timer.channelId}>`;
                   await interaction.deferReply({ ephemeral: true });
                   await interaction.editReply({ content: reply });
                 }
@@ -206,7 +206,7 @@ module.exports = {
               timer.category && timer.category !== ""
                 ? ` | ${lpcode.current.category} **${timer.category}**`
                 : ""
-            }`;
+            } | in <#${timer.channelId}>`;
 
             await interaction.deferReply({ ephemeral: true });
             await interaction.editReply({ content: reply });
@@ -249,8 +249,8 @@ module.exports = {
             } else {
               await interaction.deferReply({ ephemeral: true });
               await interaction.editReply({
-                content: lpcode.started, // Eg. "Timer started"
-              }); // Guild has no timer
+                content: lpcode.empty.name, // Eg. "No timer set. please add a time amount (in hours) after the `/timer` command"
+              });
             }
           } else if (lowerCaseArgs === "on") {
             // ##########################
@@ -268,8 +268,8 @@ module.exports = {
             } else {
               await interaction.deferReply({ ephemeral: true });
               await interaction.editReply({
-                content: lpcode.notFound, // Eg. "Timer not found"
-              }); // Guild has no timer
+                content: lpcode.empty.name, // Eg. "No timer set. please add a time amount (in hours) after the `/timer` command"
+              });
             }
           }
           // All other cases where timeArg is neither "off" nor "on"
@@ -366,7 +366,7 @@ module.exports = {
                         foundCategory && foundCategory !== ""
                           ? ` | ${lpcode.current.category} **${foundCategory}**`
                           : ""
-                      }`;
+                      } | in <#${timer.channelId}>`;
                       await interaction.deferReply({ ephemeral: true });
                       await interaction.editReply({
                         content: reply,
