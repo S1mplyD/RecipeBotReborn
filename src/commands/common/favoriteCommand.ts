@@ -96,7 +96,10 @@ module.exports = {
       recipes === undefined ||
       recipes.length < 1
     )
-      interaction.reply("You have no favorite recipes");
+      interaction.reply({
+        content: "You have no favorite recipes",
+        ephemeral: true,
+      });
     else {
       const remove = interaction.options.get("remove");
       let foundFavorite;
