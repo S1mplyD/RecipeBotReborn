@@ -39,8 +39,6 @@ export async function startTimer(
 
   if (status === true && client.channels.cache.get(timer.channelId)) {
     const channel = await client.channels.fetch(timer.channelId);
-    console.log(`channel: ${channel}`);
-    console.log("hello");
     let newTimer: TimerType | null = null;
     if (timer.startedAt === undefined) {
       await addStartTime(timer, new Date());
