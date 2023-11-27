@@ -47,3 +47,8 @@ export type statsType = {
   addDate: string;
   removeDate: string;
 };
+
+export type serverCountType = {
+  servers: number;
+  timeStamp: Date;
+}

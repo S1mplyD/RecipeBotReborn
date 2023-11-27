@@ -13,6 +13,7 @@ import { AutoPoster } from "topgg-autoposter";
 import currentDateTime from "./utils/dateTime";
 import {
   createGuildStats,
+  createServerCountTimeSeries,
   updateRemoveGuildStat,
 } from "./database/querys/stats";
 import schedule from "node-schedule";
@@ -68,6 +69,7 @@ client.once(Events.ClientReady, async (c) => {
 
   console.log(`Ready! Logged in as ${c.user.tag}`);
   //Controllo i server che usano il bot
+  createServerCountTimeSeries();
 
   const gilde = client.guilds.cache;
   gilde.forEach(async (guild) => {

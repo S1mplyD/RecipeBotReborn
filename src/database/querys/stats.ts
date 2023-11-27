@@ -1,5 +1,6 @@
 import statsModel from "../schema/stats.model";
-import { statsType } from "../../utils/types";
+import { serverCountType, statsType } from "../../utils/types";
+import serverCountModel from "../schema/timeSeries.model";
 
 export async function createGuildStats(addDate: string) {
   console.log(`addDate: ${addDate}`);
@@ -31,4 +32,15 @@ export async function updateRemoveGuildStat(
 export async function getStatsDocumentById(id: string) {
   const stats: statsType | null = await statsModel.findById(id);
   return stats;
+}
+
+export async function createServerCountTimeSeries() {
+  console.log("counting Servers...");
+  const date = await new Date;
+  const serverCountData: serverCountType | null = await serverCountModel.create({
+    servers: 0,
+    timeStamp: date,
+  });
+  if (!serverCountData) return new Error("Error while creating serverCount stat");
+  else return serverCountData;
 }
