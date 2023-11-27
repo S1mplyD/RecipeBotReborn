@@ -63,13 +63,9 @@ export default <LanguageTranscription>{
 
   favorite: {
     title: "Ricette preferite:",
-    delete: {
-      name: "Seleziona quale ricetta vuoi rimuovere (🗑️ Rimuovi tutte, ❌ Annulla)",
-    },
-    empty: {
-      name: "Nessun preferito",
-      value: "🍴",
-    },
+    empty: "Non hai ricette preferite",
+    notFavorite: "non è tra i tuoi preferiti",
+    removed: "rimossa dai preferiti",
   },
 
   languages: {

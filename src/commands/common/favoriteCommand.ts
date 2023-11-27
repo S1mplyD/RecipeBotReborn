@@ -7,7 +7,7 @@ import {
   SlashCommandBuilder,
   CommandInteraction,
 } from "discord.js";
-import { RecipeType, UserType } from "../../utils/types";
+import { RecipeType, UserType, GuildType } from "../../utils/types";
 import {
   createUser,
   getAllUserFavorites,
@@ -16,6 +16,8 @@ import {
 } from "../../database/querys/user";
 import constants from "../../utils/constants";
 import { checkVoteAndAnswer } from "../../utils/checks";
+import loadLanguage from "../../utils/loadLanguage";
+import { getGuildLang } from "../../database/querys/guild";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -73,7 +75,13 @@ module.exports = {
       }
     }
   },
-  async execute(interaction: CommandInteraction) {
+  async execute(interaction: CommandInteraction, guild: GuildType) {
+    const lang: string | Error = await getGuildLang(guild.guildId);
+    if (lang instanceof Error) return lang;
+
+    const languagePack = loadLanguage(lang);
+    const lpcode = languagePack.code.favorite;
+
     const user: UserType | Error = await getUser(interaction.user.id);
     if (user instanceof Error) {
       await createUser(interaction.user.id);
@@ -97,7 +105,7 @@ module.exports = {
       recipes.length < 1
     )
       interaction.reply({
-        content: "You have no favorite recipes",
+        content: lpcode.empty, //TODO: Translate
         ephemeral: true,
       });
     else {
@@ -143,14 +151,14 @@ module.exports = {
             );
 
             interaction.reply({
-              content: `Recipe **${foundFavorite.recipe.name}** removed from favorites`,
+              content: `**${foundFavorite.recipe.name}** ${lpcode.removed}`,
               ephemeral: true,
               components: [row],
             });
           }
         } catch {
           interaction.reply({
-            content: `Recipe **${foundFavorite.recipe.name}** is not in your favorites`,
+            content: `**${foundFavorite.recipe.name}** ${lpcode.notFavorite}`,
             ephemeral: true,
           });
         }
