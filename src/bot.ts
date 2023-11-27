@@ -9,7 +9,6 @@ import { createGuild, getGuildByGuildId } from "./database/querys/guild";
 import { GuildType } from "./utils/types";
 import guildModel from "./database/schema/guild.model";
 import { startAllTimer, stopTimer } from "./utils/timers";
-import { AutoPoster } from "topgg-autoposter";
 import timerModel from "./database/schema/timers.model";
 import { getTimerByGuildId } from "./database/querys/timers";
 
@@ -42,21 +41,8 @@ for (const folder of commandFolders) {
 }
 
 client.once(Events.ClientReady, async (c) => {
-  if (process.env.CLIENT_ID == "657369551121678346") {
-    const topGGToken = process.env.TOPGG_TOKEN || "";
-    const poster = AutoPoster(topGGToken, client);
-
-    poster.on("posted", (stats) => {
-      console.log(`Posted stats to Top.gg | ${stats.serverCount} servers`);
-    });
-
-    poster.on("error", (err) => {
-      console.error("Error posting stats to Top.gg:", err);
-    });
-  }
 
   console.log(`Ready! Logged in as ${c.user.tag}`);
-  //Controllo i server che usano il bot
 
   const gilde = client.guilds.cache;
   gilde.forEach(async (guild) => {
@@ -83,8 +69,6 @@ client.on("guildCreate", async (guild) => {
 });
 
 client.on("guildDelete", async (guild) => {
-  // Qui puoi eseguire l'operazione di eliminazione nel database
-
   try {
     const timer = await getTimerByGuildId(guild.id);
     if (timer) stopTimer(timer);
