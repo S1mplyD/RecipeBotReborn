@@ -43,13 +43,13 @@ export type Interval = {
   guildId: string;
 };
 
-export type statsType = {
+export type StatsType = {
   _id: string;
-  addDate: string;
-  removeDate: string;
+  addDate: Date;
+  removeDate: Date;
 };
 
-export type serverCountType = {
+export type ServerCountType = {
   servers: number;
   timeStamp: Date;
 }
