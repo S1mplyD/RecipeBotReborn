@@ -10,6 +10,7 @@ interface Recipe {
   desc: string;
   lang: string;
   featuredData: string[];
+  directions: string;
 }
 
 interface RecipeDocument extends Recipe, Document {}
@@ -24,6 +25,7 @@ const recipeSchema = new Schema<RecipeDocument>({
   desc: { type: String, required: true },
   lang: { type: String, required: true },
   featuredData: { type: [String] },
+  directions: { type: String },
 });
 
 const recipeModel = model<RecipeDocument>("recipeData", recipeSchema);
