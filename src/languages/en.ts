@@ -63,13 +63,9 @@ export default <LanguageTranscription>{
 
   favorite: {
     title: "Favorite recipes:",
-    delete: {
-      name: "Select which recipe you want to delete (🗑️ Delete all, ❌ Cancel)",
-    },
-    empty: {
-      name: "No favorites",
-      value: "🍴",
-    },
+    empty: "You have no favorite recipes",
+    notFavorite: "is not in your favorites",
+    removed: "removed from favorites",
   },
 
   languages: {

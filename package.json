@@ -7,7 +7,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "tsc && node dist/deployCommands.js && nodemon src/index.ts",
-    "deploy": "node dist/deployCommands.js"
+    "deploy": "node dist/deployCommands.js",
+    "shard": "tsc && node dist/deployCommands.js && nodemon dist/index.js"
   },
   "repository": {
     "type": "git",

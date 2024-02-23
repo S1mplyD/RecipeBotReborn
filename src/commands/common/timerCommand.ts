@@ -7,6 +7,7 @@ import { SlashCommandBuilder } from "@discordjs/builders";
 import { GuildType, TimerType } from "../../utils/types";
 import { startTimer, stopTimer } from "../../utils/timers";
 import {
+  changeTimerChannel,
   createTimer,
   getTimerByGuildId,
   setTimerStatus,
@@ -122,6 +123,14 @@ module.exports = {
       if (!timeArg) {
         const timer = await getTimerByGuildId(interaction.guildId!);
 
+        if (timer && !client.channels.cache.get(timer.channelId)) {
+          const newChannel = await changeTimerChannel(
+            interaction.channelId,
+            guild.guildId
+          );
+          if (newChannel) timer.channelId = newChannel;
+        }
+
         // If the guild already has a timer, check if user gave a vaid category, otherwise reply with timer info.
         if (timer) {
           if (foundCategory) {
@@ -149,6 +158,14 @@ module.exports = {
 
                 // Start the updated timer
                 await stopTimer(timer);
+                const newChannel = await changeTimerChannel(
+                  interaction.channelId,
+                  guild.guildId
+                );
+                if (newChannel) {
+                  newTimer!.channelId = newChannel;
+                  timer.channelId = newChannel;
+                }
                 await setTimerStatus(newTimer!, true);
                 await startTimer(newTimer!, client, true);
                 if (timer) {
@@ -163,7 +180,7 @@ module.exports = {
                     foundCategory && foundCategory !== ""
                       ? ` | ${lpcode.current.category} **${foundCategory}**`
                       : ""
-                  }`;
+                  } | in <#${timer.channelId}>`;
                   await interaction.deferReply({ ephemeral: true });
                   await interaction.editReply({ content: reply });
                 }
@@ -197,7 +214,7 @@ module.exports = {
               timer.category && timer.category !== ""
                 ? ` | ${lpcode.current.category} **${timer.category}**`
                 : ""
-            }`;
+            } | in <#${timer.channelId}>`;
 
             await interaction.deferReply({ ephemeral: true });
             await interaction.editReply({ content: reply });
@@ -214,6 +231,14 @@ module.exports = {
         // Command has timeArg argument
         const timer = await getTimerByGuildId(interaction.guildId!);
 
+        if (timer && !client.channels.cache.get(timer.channelId)) {
+          const newChannel = await changeTimerChannel(
+            interaction.channelId,
+            guild.guildId
+          );
+          if (newChannel) timer.channelId = newChannel;
+        }
+
         if (typeof timeArg.value === "string") {
           const lowerCaseArgs = timeArg.value.toLowerCase();
 
@@ -224,7 +249,7 @@ module.exports = {
 
             // And check if guild has a timer
             if (timer) {
-              await stopTimer(timer);
+              if (timer.status == true) await stopTimer(timer);
               await interaction.deferReply({ ephemeral: true });
               interaction.editReply({
                 content: lpcode.stopped, // Eg. "Timer stopped"
@@ -232,8 +257,8 @@ module.exports = {
             } else {
               await interaction.deferReply({ ephemeral: true });
               await interaction.editReply({
-                content: lpcode.started, // Eg. "Timer started"
-              }); // Guild has no timer
+                content: lpcode.empty.name, // Eg. "No timer set. please add a time amount (in hours) after the `/timer` command"
+              });
             }
           } else if (lowerCaseArgs === "on") {
             // ##########################
@@ -242,9 +267,20 @@ module.exports = {
 
             // And check if guild has a timer
             if (timer) {
-              await stopTimer(timer);
-              await setTimerStatus(timer, true);
-              await startTimer(timer, client, true);
+              if (timer.status == false) {
+                await setTimerStatus(timer, true);
+
+                if (timer.channelId != interaction.channelId) {
+                  const newChannel = await changeTimerChannel(
+                    interaction.channelId,
+                    guild.guildId
+                  );
+                  if (newChannel) {
+                    timer.channelId = newChannel;
+                  }
+                }
+                await startTimer(timer, client, true);
+              }
               await interaction.deferReply({ ephemeral: true });
               await interaction.editReply({
                 content: lpcode.started, // Eg. "Timer started"
@@ -252,8 +288,8 @@ module.exports = {
             } else {
               await interaction.deferReply({ ephemeral: true });
               await interaction.editReply({
-                content: lpcode.notFound, // Eg. "Timer not found"
-              }); // Guild has no timer
+                content: lpcode.empty.name, // Eg. "No timer set. please add a time amount (in hours) after the `/timer` command"
+              });
             }
           }
           // All other cases where timeArg is neither "off" nor "on"
@@ -317,11 +353,19 @@ module.exports = {
                 });
               } else {
                 try {
-                  const updatedTimer = await updateTimer(
-                    timer,
-                    timeArg.value as unknown as number,
-                    foundCategory as unknown as string
-                  );
+                  let updatedTimer: string | null = null;
+
+                  if (
+                    timer.time != (timeArg.value as unknown as number) ||
+                    timer.category != (foundCategory as unknown as string)
+                  ) {
+                    updatedTimer = await updateTimer(
+                      timer,
+                      timeArg.value as unknown as number,
+                      foundCategory as unknown as string
+                    );
+                  }
+
                   if (updatedTimer) {
                     // Time (and possibly Category) update ERROR (input time was less than 1 or more than 24)
                     await interaction.deferReply({ ephemeral: true });
@@ -336,6 +380,16 @@ module.exports = {
 
                     // Start the updated timer
                     await stopTimer(timer);
+                    if (timer.channelId != interaction.channelId) {
+                      const newChannel = await changeTimerChannel(
+                        interaction.channelId,
+                        guild.guildId
+                      );
+                      if (newChannel) {
+                        newTimer!.channelId = newChannel;
+                        timer.channelId = newChannel;
+                      }
+                    }
                     await setTimerStatus(newTimer!, true);
                     await startTimer(newTimer!, client, true);
                     if (timer) {
@@ -350,7 +404,7 @@ module.exports = {
                         foundCategory && foundCategory !== ""
                           ? ` | ${lpcode.current.category} **${foundCategory}**`
                           : ""
-                      }`;
+                      } | in <#${timer.channelId}>`;
                       await interaction.deferReply({ ephemeral: true });
                       await interaction.editReply({
                         content: reply,

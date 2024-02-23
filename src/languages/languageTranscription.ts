@@ -61,14 +61,9 @@ export interface LanguageTranscription {
 
   favorite: {
     title: string;
-    delete: {
-      name: string;
-      value?: string;
-    };
-    empty: {
-      name: string;
-      value: string;
-    };
+    empty: string;
+    notFavorite: string;
+    removed: string;
   };
 
   languages: {

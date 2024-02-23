@@ -19,6 +19,7 @@ export type RecipeType = {
   desc: string;
   lang: string;
   featuredData: string[];
+  directions: string;
 };
 
 export type TimerType = {
