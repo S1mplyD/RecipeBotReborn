@@ -16,7 +16,7 @@ export async function createTimer(
   channelId: string,
   time: number,
   category: string,
-  lang: string
+  lang: string,
 ): Promise<TimerType | string> {
   const languagePack = loadLanguage(lang);
   const lpcode = languagePack.code.timerError;
@@ -53,7 +53,7 @@ export async function getTimerByGuildId(guildId: string) {
 export async function setTimerStatus(timer: TimerType, status: boolean) {
   const update = await timerModel.updateOne(
     { channelId: timer.channelId },
-    { status: status }
+    { status: status },
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else console.log("timer status updated");
@@ -69,7 +69,7 @@ export async function getTimerStatus(timer: TimerType) {
 export async function updateTimer(
   timer: TimerType,
   time?: number,
-  category?: string
+  category?: string,
 ): Promise<string | null> {
   const lang: string | Error = await getGuildLang(timer.guildId);
   if (lang instanceof Error) return lang.message;
@@ -87,6 +87,7 @@ export async function updateTimer(
     if (typeof time !== "undefined") {
       update.time = time * hourMultiplier;
     }
+    update.startedAt = new Date();
     update.category = category || "";
     await timerModel.updateOne({ guildId: timer.guildId }, update);
     if (update.modifiedCount < 1) console.log("cannot update");
@@ -97,7 +98,7 @@ export async function updateTimer(
 export async function changeTimerLang(lang: string, guildId: string) {
   const update = await timerModel.updateOne(
     { guildId: guildId },
-    { lang: lang }
+    { lang: lang },
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else return null;
@@ -108,7 +109,7 @@ export async function addStartTime(timer: TimerType, date: Date) {
 
   const update = await timerModel.updateOne(
     { channelId: timer.channelId },
-    { startedAt: newDate }
+    { startedAt: newDate },
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else return null;
@@ -117,7 +118,7 @@ export async function addStartTime(timer: TimerType, date: Date) {
 export async function updateStartTimer(timer: TimerType) {
   const update = await timerModel.updateOne(
     { guildId: timer.guildId },
-    { startedAt: new Date() }
+    { startedAt: new Date() },
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else return null;
@@ -126,7 +127,7 @@ export async function updateStartTimer(timer: TimerType) {
 export async function changeTimerChannel(channelId: string, guildId: string) {
   const update = await timerModel.updateOne(
     { guildId: guildId },
-    { channelId: channelId }
+    { channelId: channelId },
   );
   if (update.modifiedCount < 1) console.log("cannot update");
   else return channelId;
